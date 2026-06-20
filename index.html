@@ -133,6 +133,29 @@ h2{margin:0;font-weight:600}
 .pchip{padding:6px 12px;border-radius:99px;font-size:13px;font-weight:600;border:1.5px solid var(--line);color:var(--muted);background:var(--surface)}
 .pchip.on{border-color:var(--brand);color:var(--brand);background:var(--brand-soft)}
 .badge{font-size:11px;font-weight:700;color:var(--c);background:var(--cs);padding:1px 7px;border-radius:99px}
+.rhead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.rname{font-family:'Fraunces',serif;font-size:20px;font-weight:600}
+.rmeta{font-size:12px;color:var(--muted);margin-top:3px}
+.rmoney{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.rm{border-radius:12px;padding:11px 12px}
+.rm-debt{background:var(--cs-unpaid)}
+.rm-aco{background:var(--cs-tocollect)}
+.rmk{display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted)}
+.rm-debt .rmv{color:var(--c-unpaid)}
+.rm-aco .rmv{color:var(--c-tocollect)}
+.rmv{display:block;font-size:18px;font-weight:700;margin-top:2px}
+.rchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.rchip{font-size:11px;font-weight:700;color:var(--c);background:var(--cs);padding:2px 9px;border-radius:99px}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.rstat{background:var(--bg);border-radius:10px;padding:9px 11px}
+.rk{display:block;font-size:11px;color:var(--muted);font-weight:600}
+.rv{display:block;font-size:15px;font-weight:700;margin-top:2px}
+.rsub{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin:6px 0 8px}
+.rprow{display:flex;align-items:center;gap:10px;background:var(--surface);border-left:4px solid var(--c);border-radius:10px;padding:9px 11px;margin-bottom:6px;box-shadow:var(--shadow)}
+.rpd{font-size:13px;font-weight:600;flex:1}
+.rpill{font-size:11px;font-weight:700;color:var(--c);background:var(--cs);padding:3px 8px;border-radius:99px;white-space:nowrap}
+.rpa{font-size:13px;font-weight:700;white-space:nowrap}
+.rok{color:var(--c-collected);font-weight:600;font-size:14px;padding:8px 0}
 .statuspick button.sel{border-color:var(--c);color:var(--c);background:var(--cs)}
 .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
 .btn{flex:1;padding:13px;border-radius:11px;font-weight:600;font-size:15px;min-width:90px}
@@ -238,6 +261,15 @@ h2{margin:0;font-weight:600}
     <button class="btn btn-danger" id="patDelete" style="display:none">Borrar</button>
     <button class="btn btn-ghost" id="patCancel">Cancelar</button>
     <button class="btn btn-primary" id="patSave">Guardar</button>
+  </div>
+</div></div>
+
+<!-- Patient report -->
+<div class="scrim" id="reportScrim"><div class="sheet">
+  <div id="reportBody"></div>
+  <div class="actions">
+    <button class="btn btn-ghost" id="reportClose">Cerrar</button>
+    <button class="btn btn-primary" id="reportEdit">Editar paciente</button>
   </div>
 </div></div>
 
@@ -358,6 +390,7 @@ function listForMonth(d){const y=d.getFullYear(),m=d.getMonth();
 
 /* ---------- Render top ---------- */
 function weekStart(d){return addDays(d,-((d.getDay()+6)%7));}
+function listForWeek(d){const ws=weekStart(d),a=ymd(ws),b=ymd(addDays(ws,4));return sessions.filter(s=>s.date>=a&&s.date<=b).sort((x,y)=>x.date===y.date?x.time.localeCompare(y.time):x.date.localeCompare(y.date));}
 function renderTop(){
   const isDay=currentView==='day', isWeek=currentView==='week', isCal=currentView==='cal', isPat=currentView==='pat';
   document.getElementById('summaryWrap').style.display=isPat?'none':'block';
@@ -370,16 +403,16 @@ function renderTop(){
     title.textContent=isToday?'Hoy':DOWLONG[dow];
     sub.textContent=selDay.getDate()+' '+MONTHS[selDay.getMonth()]+' '+selDay.getFullYear();
     if(!isToday) tbtn.style.display='block';
-    fillSummary(summaryOf(listForMonth(selDay)));
-    document.getElementById('sumCap').textContent='Totales de '+MONTHS[selDay.getMonth()]+' '+selDay.getFullYear();
+    fillSummary(summaryOf(listForDay(selDay)));
+    document.getElementById('sumCap').textContent=isToday?'Totales de hoy':'Totales del '+selDay.getDate()+' '+MONTHS[selDay.getMonth()];
   } else if(isWeek){
     const ws=weekStart(selDay), we=addDays(ws,4);
     const isThis=ymd(ws)<=ymd(REALTODAY)&&ymd(REALTODAY)<=ymd(addDays(ws,6));
     title.textContent='Semana';
     sub.textContent=ws.getDate()+(ws.getMonth()===we.getMonth()?'':' '+MONTHS[ws.getMonth()].slice(0,3))+'–'+we.getDate()+' '+MONTHS[we.getMonth()].slice(0,3)+' '+we.getFullYear();
     if(!isThis) tbtn.style.display='block';
-    fillSummary(summaryOf(listForMonth(selDay)));
-    document.getElementById('sumCap').textContent='Totales de '+MONTHS[selDay.getMonth()]+' '+selDay.getFullYear();
+    fillSummary(summaryOf(listForWeek(selDay)));
+    document.getElementById('sumCap').textContent='Totales de la semana';
   } else if(isCal){
     title.textContent=MONTHS[viewMonth.getMonth()]; sub.textContent=viewMonth.getFullYear();
     fillSummary(summaryOf(listForMonth(viewMonth)));
@@ -483,7 +516,7 @@ function renderPatList(){
     const cc=COUNTRIES[p.country]||COUNTRIES[''],init=p.name.trim().charAt(0).toUpperCase();
     const ps=PAT_STATUS[p.status||'activo']||PAT_STATUS.activo;
     const price=(p.price!=null&&p.price!=='')?`<span class="price">${fmtMoney(p.price,curOf(p.country))}</span>`:'<span class="pnoprice">Falta precio</span>';
-    return `<div class="row" style="--c:${ps.c}" onclick="openPatient('${p.id}')"><span class="avatar">${init}</span><span class="who"><div class="nm">${esc(p.name)} <span style="font-weight:400">${cc.f}</span></div><div class="meta"><span class="badge" style="--c:${ps.c};--cs:${ps.cs}">${ps.label}</span> · ${cc.n}</div></span>${price}</div>`;
+    return `<div class="row" style="--c:${ps.c}" onclick="openReport('${p.id}')"><span class="avatar">${init}</span><span class="who"><div class="nm">${esc(p.name)} <span style="font-weight:400">${cc.f}</span></div><div class="meta"><span class="badge" style="--c:${ps.c};--cs:${ps.cs}">${ps.label}</span> · ${cc.n}</div></span>${price}</div>`;
   }).join('');
 }
 function render(){renderTop();renderLegend();currentView==='cal'?renderCal():currentView==='week'?renderWeek():currentView==='pat'?renderPat():renderDay();}
@@ -570,6 +603,18 @@ async function cycleStatus(id){const s=sessions.find(x=>x.id===id);if(!s)return;
 let editingP=null,prevPatientVal=null,addingFromSession=false;
 function openNewPatientFromSession(){addingFromSession=true;openPatient(null);}
 function fillCountry(){document.getElementById('pCountry').innerHTML=Object.keys(COUNTRIES).filter(k=>k!=='').map(k=>`<option value="${k}">${COUNTRIES[k].f} ${COUNTRIES[k].n}</option>`).join('')+'<option value="">🌐 Sin país</option>';}
+function fmtDate(ds){if(!ds)return'—';const d=parseYMD(ds);return d.getDate()+' '+MONTHS[d.getMonth()].slice(0,3)+' '+d.getFullYear();}
+function humanizeSince(ds){if(!ds)return'—';const d=parseYMD(ds);const t=new Date();t.setHours(0,0,0,0);const days=Math.round((t-d)/86400000);if(days<0)return'en '+(-days)+' días';if(days===0)return'hoy';if(days<30)return'hace '+days+(days===1?' día':' días');const mo=Math.floor(days/30);if(mo<12)return'hace '+mo+(mo===1?' mes':' meses');const y=Math.floor(days/365),rem=Math.floor((days%365)/30);return'hace '+y+(y===1?' año':' años')+(rem?' '+rem+'m':'');}
+function patientStats(pid){const p=patientById(pid);const ss=sessions.filter(s=>s.patientId===pid);const by={};ORDER.forEach(k=>by[k]=0);ss.forEach(s=>{by[s.status]=(by[s.status]||0)+1;});const dates=ss.map(s=>s.date).filter(Boolean).sort();const cur=curOf(p?p.country:'');let aco=0,sinp=0,cobr=0;ss.forEach(s=>{const pr=Number(s.price)||0;if(s.status==='tocollect')aco+=pr;else if(s.status==='unpaid')sinp+=pr;else if(s.status==='collected'||s.status==='mp')cobr+=pr;});const ym=ymd(REALTODAY).slice(0,7);const thisMonth=ss.filter(s=>s.date.slice(0,7)===ym).length;const pending=ss.filter(s=>s.status==='tocollect'||s.status==='unpaid').sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));return{p,total:ss.length,by,first:dates[0]||null,last:dates[dates.length-1]||null,cur,aco,sinp,cobr,thisMonth,pending};}
+let reportId=null;
+function openReport(id){reportId=id;const r=patientStats(id),p=r.p;if(!p)return;const cc=COUNTRIES[p.country]||COUNTRIES[''],ps=PAT_STATUS[p.status||'activo']||PAT_STATUS.activo,cur=r.cur,fmt=n=>fmtMoney(n,cur);
+  let altaLine='';const _stt=(p.status||'activo');if(_stt==='alta'||_stt==='baja'){const _lbl=_stt==='alta'?'Alta clínica':'Baja';altaLine=`<div class="rstat"><span class="rk">${_lbl}</span><span class="rv">${humanizeSince(p.endDate||p.altaDate||r.last)}</span></div>`;}
+  const money=`<div class="rmoney"><div class="rm rm-debt"><span class="rmk">Sin pagar</span><span class="rmv">${fmt(r.sinp)}</span></div><div class="rm rm-aco"><span class="rmk">Pagado</span><span class="rmv">${fmt(r.aco)}</span></div></div>`;
+  const brk=ORDER.filter(k=>r.by[k]>0).map(k=>`<span class="rchip" style="${st(k)}">${STATUS[k].label}: ${r.by[k]}</span>`).join('');
+  const stats=`<div class="rgrid"><div class="rstat"><span class="rk">Sesiones totales</span><span class="rv">${r.total}</span></div><div class="rstat"><span class="rk">Este mes</span><span class="rv">${r.thisMonth}</span></div><div class="rstat"><span class="rk">Primera sesión</span><span class="rv">${fmtDate(r.first)}</span></div><div class="rstat"><span class="rk">Última sesión</span><span class="rv">${fmtDate(r.last)}</span></div><div class="rstat"><span class="rk">Antigüedad</span><span class="rv">${r.first?humanizeSince(r.first):'—'}</span></div>${altaLine}</div>`;
+  let pend;if(r.pending.length){pend='<div class="rsub">Sesiones pendientes ('+r.pending.length+')</div>'+r.pending.map(s=>{const S=STATUS[s.status]||STATUS.prog;return `<div class="rprow" style="${st(s.status)}"><span class="rpd">${fmtDate(s.date)} · ${fmtTime(s.time)}</span><span class="rpill" style="${st(s.status)}">${S.label}</span><span class="rpa">${fmt(Number(s.price)||0)}</span></div>`;}).join('');}else{pend='<div class="rok">Sin sesiones pendientes ✓</div>';}
+  document.getElementById('reportBody').innerHTML=`<div class="rhead"><span class="avatar">${p.name.trim().charAt(0).toUpperCase()}</span><div><div class="rname">${esc(p.name)} <span style="font-weight:400">${cc.f}</span></div><div class="rmeta"><span class="badge" style="--c:${ps.c};--cs:${ps.cs}">${ps.label}</span> · ${cc.n} · ${fmt(p.price)}/sesión</div></div></div>${money}<div class="rchips">${brk}</div>${stats}${pend}`;
+  show('reportScrim');}
 function buildPatStatus(cur){const el=document.getElementById('pStatusPick');el.innerHTML=['activo','alta','baja'].map(k=>`<button data-k="${k}" style="--c:${PAT_STATUS[k].c};--cs:${PAT_STATUS[k].cs}" class="${k===cur?'sel':''}">${PAT_STATUS[k].label}</button>`).join('');el.querySelectorAll('button').forEach(b=>b.onclick=()=>{el.querySelectorAll('button').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');});}
 function selPatStatus(){const b=document.querySelector('#pStatusPick button.sel');return b?b.dataset.k:'activo';}
 function openPatient(id){const p=id?patients.find(x=>x.id===id):null;editingP=p;
@@ -583,7 +628,7 @@ async function savePatient(){const name=document.getElementById('pName').value.t
   const country=document.getElementById('pCountry').value,raw=document.getElementById('pPrice').value,price=raw===''?null:Number(raw);
   let newId=null;
   const status=selPatStatus();
-  if(editingP){Object.assign(editingP,{name,country,price,status});}else{newId=uid();patients.push({id:newId,name,country,price,status,active:true});}
+  if(editingP){Object.assign(editingP,{name,country,price,status});if(status==='alta'||status==='baja'){if(!editingP.endDate&&!editingP.altaDate)editingP.endDate=ymd(REALTODAY);}else{delete editingP.endDate;delete editingP.altaDate;}}else{newId=uid();const np={id:newId,name,country,price,status,active:true};if(status==='alta'||status==='baja')np.endDate=ymd(REALTODAY);patients.push(np);}
   await saveAll();
   if(addingFromSession&&newId){addingFromSession=false;hide('patScrim');fillPatientSelect();const sel=document.getElementById('fPatient');sel.value=newId;prevPatientVal=newId;const np=patientById(newId);document.getElementById('fPrice').value=np&&np.price!=null?np.price:'';return;}
   hide('patScrim');render();}
@@ -609,7 +654,9 @@ document.getElementById('patSave').onclick=savePatient;
 document.getElementById('pCountry').onchange=()=>{const v=document.getElementById('pPrice').value.trim();if(v===''||v==='38'||v==='50000')document.getElementById('pPrice').value=defPrice(document.getElementById('pCountry').value);updatePPriceLabel();};
 document.getElementById('patCancel').onclick=()=>{if(addingFromSession){addingFromSession=false;const sel=document.getElementById('fPatient');if(sel)sel.value=prevPatientVal;}hide('patScrim');};
 document.getElementById('patDelete').onclick=deletePatient;
-['sessScrim','patScrim','setScrim','syncScrim'].forEach(id=>document.getElementById(id).onclick=e=>{if(e.target.id===id)hide(id);});
+document.getElementById('reportClose').onclick=()=>hide('reportScrim');
+document.getElementById('reportEdit').onclick=()=>{hide('reportScrim');openPatient(reportId);};
+['sessScrim','patScrim','setScrim','syncScrim','reportScrim'].forEach(id=>document.getElementById(id).onclick=e=>{if(e.target.id===id)hide(id);});
 document.getElementById('btnSettings').onclick=()=>{
   const m={cloud:'En tu cuenta de Claude (sincroniza entre dispositivos)',local:'En este navegador (solo este dispositivo)',memory:'Temporal (esta sesión)'}[Store.mode];
   document.getElementById('storageMode').textContent=m;
