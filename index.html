@@ -55,7 +55,7 @@ h2{margin:0;font-weight:600}
 .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:11px 12px}
 .card .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;font-weight:600}
 .card .v{font-size:18px;font-weight:700;margin-top:3px}
-.card.cobr .v{color:var(--c-collected)}.card.aco .v{color:var(--c-tocollect)}.card.sinp .v{color:var(--c-unpaid)}
+.card.cobr .v{color:var(--c-collected)}.card.aco .v{color:var(--brand)}.card.sinp .v{color:var(--c-unpaid)}
 .pulse{margin:10px 0 4px}
 .pulse .bar{height:8px;border-radius:99px;background:var(--line2);overflow:hidden;display:flex}
 .pulse .bar i{display:block;height:100%}
@@ -202,11 +202,11 @@ h2{margin:0;font-weight:600}
     <div class="summary">
       <div class="card"><div class="k">Sesiones</div><div class="v" id="sCount">0</div></div>
       <div class="card cobr"><div class="k">Cobrado</div><div class="v" id="sCobr">—</div></div>
-      <div class="card aco"><div class="k">A cobrar</div><div class="v" id="sAco">—</div></div>
+      <div class="card aco"><div class="k">Liquidado</div><div class="v" id="sAco">—</div></div>
       <div class="card sinp"><div class="k">Sin pagar</div><div class="v" id="sSinp">—</div></div>
     </div>
     <div class="pulse"><div class="bar" id="pulseBar"></div>
-      <div class="lbl"><span><b id="cntDone">0</b> cobradas</span><span><b id="cntPend">0</b> por cobrar / sin pagar</span></div></div>
+      <div class="lbl"><span><b id="cntDone">0</b> liquidadas</span><span><b id="cntPend">0</b> pendientes</span></div></div>
   </div>
 
   <div class="tabs">
@@ -324,7 +324,7 @@ const STATUS={
   prog:     {label:'Agendado',c:'var(--c-prog)',cs:'var(--cs-prog)',desc:'Todavía no tuve la sesión'},
   unpaid:   {label:'Sin pagar', c:'var(--c-unpaid)',cs:'var(--cs-unpaid)',desc:'La tuve, no la pagó aún'},
   tocollect:{label:'Pagado',  c:'var(--c-tocollect)',cs:'var(--cs-tocollect)',desc:'Pagada, falta que yo la cobre'},
-  collected:{label:'Cobrado',   c:'var(--c-collected)',cs:'var(--cs-collected)',desc:'Pagada y cobrada'},
+  collected:{label:'Liquidado', c:'var(--c-collected)',cs:'var(--cs-collected)',desc:'Pagada por el paciente y ya liquidada por mí'},
   mp:       {label:'Mercado Pago',c:'var(--c-mp)',cs:'var(--cs-mp)',desc:'Argentino que paga por MercadoPago'}
 };
 const ORDER=['prog','unpaid','tocollect','collected','mp'];
@@ -374,11 +374,11 @@ async function saveAll(){ await Store.set('psa8_patients',patients);await Store.
 
 /* ---------- Money ---------- */
 function summaryOf(list){
-  const b={USD:{cobr:0,aco:0,sinp:0},ARS:{cobr:0,aco:0,sinp:0}};
+  const b={USD:{cobr:0,liq:0,sinp:0},ARS:{cobr:0,liq:0,sinp:0}};
   let done=0,pend=0;
   list.forEach(s=>{const pr=Number(s.price)||0,cur=sessCur(s),bb=b[cur]||b.USD;
-    if(s.status==='collected'||s.status==='mp'){bb.cobr+=pr;done++;}
-    else if(s.status==='tocollect'){bb.aco+=pr;pend++;}
+    if(s.status==='collected'||s.status==='mp'){bb.cobr+=pr;bb.liq+=pr;done++;}
+    else if(s.status==='tocollect'){bb.cobr+=pr;pend++;}
     else if(s.status==='unpaid'){bb.sinp+=pr;pend++;}
   });
   return {count:list.length,usd:b.USD,ars:b.ARS,done,pend};
@@ -424,7 +424,7 @@ function fillSummary(s){
   document.getElementById('sCount').textContent=s.count;
   const mc=(usd,ars)=>`<span class="mu">US$ ${(usd||0).toLocaleString('es-AR')}</span><span class="ma">$ ${(ars||0).toLocaleString('es-AR')}</span>`;
   document.getElementById('sCobr').innerHTML=mc(s.usd.cobr,s.ars.cobr);
-  document.getElementById('sAco').innerHTML=mc(s.usd.aco,s.ars.aco);
+  document.getElementById('sAco').innerHTML=mc(s.usd.liq,s.ars.liq);
   document.getElementById('sSinp').innerHTML=mc(s.usd.sinp,s.ars.sinp);
   document.getElementById('cntDone').textContent=s.done;
   document.getElementById('cntPend').textContent=s.pend;
@@ -605,11 +605,11 @@ function openNewPatientFromSession(){addingFromSession=true;openPatient(null);}
 function fillCountry(){document.getElementById('pCountry').innerHTML=Object.keys(COUNTRIES).filter(k=>k!=='').map(k=>`<option value="${k}">${COUNTRIES[k].f} ${COUNTRIES[k].n}</option>`).join('')+'<option value="">🌐 Sin país</option>';}
 function fmtDate(ds){if(!ds)return'—';const d=parseYMD(ds);return d.getDate()+' '+MONTHS[d.getMonth()].slice(0,3)+' '+d.getFullYear();}
 function humanizeSince(ds){if(!ds)return'—';const d=parseYMD(ds);const t=new Date();t.setHours(0,0,0,0);const days=Math.round((t-d)/86400000);if(days<0)return'en '+(-days)+' días';if(days===0)return'hoy';if(days<30)return'hace '+days+(days===1?' día':' días');const mo=Math.floor(days/30);if(mo<12)return'hace '+mo+(mo===1?' mes':' meses');const y=Math.floor(days/365),rem=Math.floor((days%365)/30);return'hace '+y+(y===1?' año':' años')+(rem?' '+rem+'m':'');}
-function patientStats(pid){const p=patientById(pid);const ss=sessions.filter(s=>s.patientId===pid);const by={};ORDER.forEach(k=>by[k]=0);ss.forEach(s=>{by[s.status]=(by[s.status]||0)+1;});const dates=ss.map(s=>s.date).filter(Boolean).sort();const cur=curOf(p?p.country:'');let aco=0,sinp=0,cobr=0;ss.forEach(s=>{const pr=Number(s.price)||0;if(s.status==='tocollect')aco+=pr;else if(s.status==='unpaid')sinp+=pr;else if(s.status==='collected'||s.status==='mp')cobr+=pr;});const ym=ymd(REALTODAY).slice(0,7);const thisMonth=ss.filter(s=>s.date.slice(0,7)===ym).length;const pending=ss.filter(s=>s.status==='tocollect'||s.status==='unpaid').sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));return{p,total:ss.length,by,first:dates[0]||null,last:dates[dates.length-1]||null,cur,aco,sinp,cobr,thisMonth,pending};}
+function patientStats(pid){const p=patientById(pid);const ss=sessions.filter(s=>s.patientId===pid);const by={};ORDER.forEach(k=>by[k]=0);ss.forEach(s=>{by[s.status]=(by[s.status]||0)+1;});const done=ss.filter(s=>s.status!=='prog');const dates=done.map(s=>s.date).filter(Boolean).sort();const cur=curOf(p?p.country:'');let aco=0,sinp=0,cobr=0;ss.forEach(s=>{const pr=Number(s.price)||0;if(s.status==='tocollect')aco+=pr;else if(s.status==='unpaid')sinp+=pr;else if(s.status==='collected'||s.status==='mp')cobr+=pr;});const ym=ymd(REALTODAY).slice(0,7);const thisMonth=done.filter(s=>s.date.slice(0,7)===ym).length;const pending=ss.filter(s=>s.status==='tocollect'||s.status==='unpaid').sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));return{p,total:done.length,by,first:dates[0]||null,last:dates[dates.length-1]||null,cur,aco,sinp,cobr,thisMonth,pending};}
 let reportId=null;
 function openReport(id){reportId=id;const r=patientStats(id),p=r.p;if(!p)return;const cc=COUNTRIES[p.country]||COUNTRIES[''],ps=PAT_STATUS[p.status||'activo']||PAT_STATUS.activo,cur=r.cur,fmt=n=>fmtMoney(n,cur);
   let altaLine='';const _stt=(p.status||'activo');if(_stt==='alta'||_stt==='baja'){const _lbl=_stt==='alta'?'Alta clínica':'Baja';altaLine=`<div class="rstat"><span class="rk">${_lbl}</span><span class="rv">${humanizeSince(p.endDate||p.altaDate||r.last)}</span></div>`;}
-  const money=`<div class="rmoney"><div class="rm rm-debt"><span class="rmk">Sin pagar</span><span class="rmv">${fmt(r.sinp)}</span></div><div class="rm rm-aco"><span class="rmk">Pagado</span><span class="rmv">${fmt(r.aco)}</span></div></div>`;
+  const money=`<div class="rmoney"><div class="rm rm-debt"><span class="rmk">Sin pagar</span><span class="rmv">${fmt(r.sinp)}</span></div><div class="rm rm-aco"><span class="rmk">A liquidar</span><span class="rmv">${fmt(r.aco)}</span></div></div>`;
   const brk=ORDER.filter(k=>r.by[k]>0).map(k=>`<span class="rchip" style="${st(k)}">${STATUS[k].label}: ${r.by[k]}</span>`).join('');
   const stats=`<div class="rgrid"><div class="rstat"><span class="rk">Sesiones totales</span><span class="rv">${r.total}</span></div><div class="rstat"><span class="rk">Este mes</span><span class="rv">${r.thisMonth}</span></div><div class="rstat"><span class="rk">Primera sesión</span><span class="rv">${fmtDate(r.first)}</span></div><div class="rstat"><span class="rk">Última sesión</span><span class="rv">${fmtDate(r.last)}</span></div><div class="rstat"><span class="rk">Antigüedad</span><span class="rv">${r.first?humanizeSince(r.first):'—'}</span></div>${altaLine}</div>`;
   let pend;if(r.pending.length){pend='<div class="rsub">Sesiones pendientes ('+r.pending.length+')</div>'+r.pending.map(s=>{const S=STATUS[s.status]||STATUS.prog;return `<div class="rprow" style="${st(s.status)}"><span class="rpd">${fmtDate(s.date)} · ${fmtTime(s.time)}</span><span class="rpill" style="${st(s.status)}">${S.label}</span><span class="rpa">${fmt(Number(s.price)||0)}</span></div>`;}).join('');}else{pend='<div class="rok">Sin sesiones pendientes ✓</div>';}
