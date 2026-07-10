@@ -455,7 +455,7 @@ function patientById(id){return patients.find(p=>p.id===id);}
 function hasConflict(s){return sessions.some(o=>o.id!==s.id&&o.date===s.date&&o.time===s.time);}
 /* ---------- Google Calendar (Fase 1: push App -> Calendar) ---------- */
 const GCAL_CLIENT_ID='635576550067-0guc7k5bh0hopod5ahccq230h2tiepn8.apps.googleusercontent.com';
-const GCAL_SCOPE='https://www.googleapis.com/auth/calendar';
+const GCAL_SCOPE='https://www.googleapis.com/auth/calendar.app.created';
 const GCAL_TZ=(function(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'America/Argentina/Buenos_Aires';}catch(e){return 'America/Argentina/Buenos_Aires';}})();
 let gcalClient=null,gcalToken=null,gcalTokenExp=0,gcalConnected=false,gcalCalId=null,_gcalWait=null;
 function gcalInit(){ if(gcalClient)return true; if(!(window.google&&google.accounts&&google.accounts.oauth2))return false;
@@ -493,7 +493,14 @@ async function gcalConnect(){ if(!gcalInit()){ alert('Google todavia esta cargan
   try{ await gcalGetToken(true); gcalConnected=true; await Store.set('psa_gcal_on','1'); await gcalEnsureCal(); gcalUpdateUI();
     alert('Conectado a Google Calendar! Ahora toca "Sincronizar ahora" para volcar tus turnos.'); }
   catch(e){ console.error(e); alert('No se pudo conectar con Google Calendar.'); } }
-async function gcalDisconnect(){ gcalConnected=false; gcalToken=null; gcalTokenExp=0; await Store.set('psa_gcal_on','0'); gcalUpdateUI(); }
+async function gcalDisconnect(){ gcalConnected=false; gcalToken=null; gcalTokenExp=0; await Store.set('psa_gcal_on','0');
+  const reset=confirm('Google Calendar desconectado.\n\n\u00bfQuer\u00e9s adem\u00e1s DESVINCULAR el calendario actual?\n\n\u2022 Aceptar: la pr\u00f3xima vez que conectes se crear\u00e1 un calendario nuevo y se volcar\u00e1n tus turnos ah\u00ed. Eleg\u00ed esto si est\u00e1s migrando.\n\u2022 Cancelar: al reconectar segu\u00eds usando el mismo calendario de siempre.');
+  if(reset){ gcalCalId=null; await Store.set('psa_gcal_id',null);
+    let n=0; sessions.forEach(s=>{ if(s.gcalId){ delete s.gcalId; n++; } });
+    if(n) await saveAll();
+    alert('Listo. Se desvincul\u00f3 el calendario ('+n+' turnos quedaron sin v\u00ednculo).\n\nAhora: Conectar \u2192 Sincronizar.');
+  }
+  gcalUpdateUI(); }
 async function gcalSyncAll(){ if(!gcalConnected){ alert('Primero conecta Google Calendar.'); return; }
   const btn=document.getElementById('gcalSync'); if(btn)btn.textContent='Sincronizando...';
   const cutoff=ymd(new Date(REALTODAY.getFullYear(),REALTODAY.getMonth(),1));
