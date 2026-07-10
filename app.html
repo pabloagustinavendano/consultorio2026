@@ -477,11 +477,20 @@ async function gcalApi(path,opts){ opts=opts||{}; let t=await gcalGetToken(false
   if(opts.method==='DELETE')return {};
   if(!r.ok){ throw new Error('GCal '+r.status+' '+(await r.text())); }
   return r.json(); }
-async function gcalEnsureCal(){ if(gcalCalId)return gcalCalId; const stored=await Store.get('psa_gcal_id'); if(stored){gcalCalId=stored;return stored;}
-  let found=null;
-  try{ const list=await gcalApi('/users/me/calendarList'); found=(list.items||[]).find(c=>c.summary==='Consultorio App')||null; }catch(e){ found=null; }
-  if(found)gcalCalId=found.id; else{ const c=await gcalApi('/calendars',{method:'POST',body:JSON.stringify({summary:'Consultorio App',timeZone:GCAL_TZ})}); gcalCalId=c.id; }
-  await Store.set('psa_gcal_id',gcalCalId); return gcalCalId; }
+async function gcalEnsureCal(){ if(gcalCalId)return gcalCalId;
+  let id=(settings&&settings.gcalCalId)||await Store.get('psa_gcal_id')||null;
+  if(id){ try{ await gcalApi('/calendars/'+encodeURIComponent(id)); gcalCalId=id; }catch(e){ id=null; } }
+  if(!gcalCalId){
+    try{ const list=await gcalApi('/users/me/calendarList'); const f=(list.items||[]).find(c=>c.summary==='Consultorio App'); if(f)gcalCalId=f.id; }catch(e){}
+  }
+  if(!gcalCalId){
+    const c=await gcalApi('/calendars',{method:'POST',body:JSON.stringify({summary:'Consultorio App',timeZone:GCAL_TZ})});
+    gcalCalId=c.id;
+    let n=0; sessions.forEach(s=>{ if(s.gcalId){ delete s.gcalId; n++; } });
+    if(n) await saveAll();
+  }
+  settings.gcalCalId=gcalCalId; await Store.set('psa_gcal_id',gcalCalId); await saveAll();
+  return gcalCalId; }
 function gcalEndTime(date,time,mins){ const a=time.split(':').map(Number); const d=parseYMD(date); d.setHours(0,0,0,0); d.setTime(d.getTime()+((a[0]*60+a[1]+mins)*60000));
   const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())+':00'; }
 async function gcalPush(s){ if(!gcalConnected||!s)return; try{ const cal=await gcalEnsureCal(); const p=patientById(s.patientId);
@@ -496,7 +505,7 @@ async function gcalConnect(){ if(!gcalInit()){ alert('Google todavia esta cargan
   catch(e){ console.error(e); alert('No se pudo conectar con Google Calendar.'); } }
 async function gcalDisconnect(){ gcalConnected=false; gcalToken=null; gcalTokenExp=0; await Store.set('psa_gcal_on','0');
   const reset=confirm('Google Calendar desconectado.\n\n\u00bfQuer\u00e9s adem\u00e1s DESVINCULAR el calendario actual?\n\n\u2022 Aceptar: la pr\u00f3xima vez que conectes se crear\u00e1 un calendario nuevo y se volcar\u00e1n tus turnos ah\u00ed. Eleg\u00ed esto si est\u00e1s migrando.\n\u2022 Cancelar: al reconectar segu\u00eds usando el mismo calendario de siempre.');
-  if(reset){ gcalCalId=null; await Store.set('psa_gcal_id',null);
+  if(reset){ gcalCalId=null; settings.gcalCalId=null; await Store.set('psa_gcal_id',null);
     let n=0; sessions.forEach(s=>{ if(s.gcalId){ delete s.gcalId; n++; } });
     if(n) await saveAll();
     alert('Listo. Se desvincul\u00f3 el calendario ('+n+' turnos quedaron sin v\u00ednculo).\n\nAhora: Conectar \u2192 Sincronizar.');
@@ -543,7 +552,17 @@ async function gcalPull(silent){
       added++;
     }
     let removed=0;
-    { const present=new Set(items.filter(e=>e.status!=='cancelled').map(e=>e.id)); const _wMin=ymd(new Date(REALTODAY.getFullYear(),REALTODAY.getMonth(),1)),_wMax=ymd(new Date(REALTODAY.getFullYear(),REALTODAY.getMonth()+6,1)); sessions=sessions.filter(s=>{ if(s.gcalId&&s.date>=_wMin&&s.date<_wMax&&!present.has(s.gcalId)){removed++;return false;} return true; }); }
+    if(!silent && items.length>0){
+      const present=new Set(items.filter(e=>e.status!=='cancelled').map(e=>e.id));
+      const _wMin=ymd(new Date(REALTODAY.getFullYear(),REALTODAY.getMonth(),1)),_wMax=ymd(new Date(REALTODAY.getFullYear(),REALTODAY.getMonth()+6,1));
+      const cand=sessions.filter(s=>s.gcalId&&s.date>=_wMin&&s.date<_wMax&&!present.has(s.gcalId));
+      const linked=sessions.filter(s=>s.gcalId&&s.date>=_wMin&&s.date<_wMax).length;
+      let ok=true;
+      if(cand.length>3 || (linked>0 && cand.length/linked>0.5)){
+        ok=confirm('Atenci\u00f3n: '+cand.length+' turno(s) ya no est\u00e1n en Google Calendar y se borrar\u00edan de la app.\n\nSi borraste o cambiaste el calendario, toc\u00e1 Cancelar.\n\n\u00bfBorrar esos turnos?');
+      }
+      if(ok && cand.length){ const del=new Set(cand.map(s=>s.id)); sessions=sessions.filter(s=>!del.has(s.id)); removed=cand.length; }
+    }
     if(added||newPat||moved||removed){ await saveAll(); render(); }
     if(btn)btn.textContent='Traer turnos';
     if(!silent)alert((added||moved||removed)?('Calendar: '+added+' nuevo(s)'+(moved?', '+moved+' reprogramado(s)':'')+(removed?', '+removed+' borrado(s)':'')+(newPat?' \u00b7 '+newPat+' pendiente(s) por completar':'')+'.'):'No hay novedades en el Calendar.');
@@ -1197,7 +1216,7 @@ function fillAccountInfo(){
   if(cc) cc.value=settings.currency||'USD';
   const cl=document.getElementById('cfgLiq'); if(cl) cl.checked=liqOn();
   (async()=>{ const row=document.getElementById('gcalIdRow'); if(!row) return;
-    const id=await Store.get('psa_gcal_id');
+    const id=(settings&&settings.gcalCalId)||await Store.get('psa_gcal_id');
     if(gcalConnected&&id){ row.style.display='block'; row.innerHTML='Calendario vinculado: <b>'+String(id)+'</b>'; }
     else row.style.display='none'; })();
 }
