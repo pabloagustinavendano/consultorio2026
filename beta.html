@@ -459,7 +459,7 @@ function patientById(id){return patients.find(p=>p.id===id);}
 function hasConflict(s){return sessions.some(o=>o.id!==s.id&&o.date===s.date&&o.time===s.time);}
 /* ---------- Google Calendar (Fase 1: push App -> Calendar) ---------- */
 const GCAL_CLIENT_ID='635576550067-0guc7k5bh0hopod5ahccq230h2tiepn8.apps.googleusercontent.com';
-const GCAL_SCOPE='https://www.googleapis.com/auth/calendar.app.created';
+const GCAL_SCOPE='https://www.googleapis.com/auth/calendar.app.created https://www.googleapis.com/auth/calendar.calendarlist';
 const GCAL_TZ=(function(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'America/Argentina/Buenos_Aires';}catch(e){return 'America/Argentina/Buenos_Aires';}})();
 let gcalClient=null,gcalToken=null,gcalTokenExp=0,gcalConnected=false,gcalCalId=null,_gcalWait=null;
 function gcalInit(){ if(gcalClient)return true; if(!(window.google&&google.accounts&&google.accounts.oauth2))return false;
