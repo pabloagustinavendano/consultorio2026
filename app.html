@@ -366,8 +366,7 @@ h2{margin:0;font-weight:600}
   <div class="setsec">Google Calendar</div>
   <div class="setrow"><span id="gcalState" style="color:var(--muted);font-size:14px">—</span><span><button class="link" id="gcalConnect">Conectar</button><button class="link" id="gcalSync" style="display:none">Sincronizar</button> <button class="link" id="gcalPullBtn" style="display:none">Traer turnos</button> <button class="link danger" id="gcalDisconnect" style="display:none">Desconectar</button></span></div>
 
-    <div class="hint" id="gcalIdRow" style="margin:-2px 2px 8px;display:none;word-break:break-all"></div>
-  <div class="setsec" id="secLiq">Informes</div>
+    <div class="setsec" id="secLiq">Informes</div>
   <div class="setrow" id="rowLiq"><span>Informe mensual</span><button class="link" id="openLiq">Ver / Imprimir</button></div>
 
   <div class="setsec">Avanzado</div>
@@ -479,13 +478,17 @@ async function gcalApi(path,opts){ opts=opts||{}; let t=await gcalGetToken(false
   return r.json(); }
 async function gcalEnsureCal(){ if(gcalCalId)return gcalCalId;
   let id=(settings&&settings.gcalCalId)||await Store.get('psa_gcal_id')||null;
-  if(id){ try{ await gcalApi('/calendars/'+encodeURIComponent(id)); gcalCalId=id; }catch(e){ id=null; } }
+  if(id){ try{ await gcalApi('/calendars/'+encodeURIComponent(id)); gcalCalId=id;
+      try{ await gcalApi('/users/me/calendarList/'+encodeURIComponent(id)); }
+      catch(e2){ try{ await gcalApi('/users/me/calendarList',{method:'POST',body:JSON.stringify({id:id,selected:true})}); }catch(e3){} }
+    }catch(e){ id=null; } }
   if(!gcalCalId){
     try{ const list=await gcalApi('/users/me/calendarList'); const f=(list.items||[]).find(c=>c.summary==='Consultorio App'); if(f)gcalCalId=f.id; }catch(e){}
   }
   if(!gcalCalId){
     const c=await gcalApi('/calendars',{method:'POST',body:JSON.stringify({summary:'Consultorio App',timeZone:GCAL_TZ})});
     gcalCalId=c.id;
+    try{ await gcalApi('/users/me/calendarList',{method:'POST',body:JSON.stringify({id:gcalCalId,selected:true})}); }catch(e){ console.warn('calendarList insert',e); }
     let n=0; sessions.forEach(s=>{ if(s.gcalId){ delete s.gcalId; n++; } });
     if(n) await saveAll();
   }
@@ -1215,10 +1218,6 @@ function fillAccountInfo(){
   if(cs) cs.value=settings.clinicSub||'';
   if(cc) cc.value=settings.currency||'USD';
   const cl=document.getElementById('cfgLiq'); if(cl) cl.checked=liqOn();
-  (async()=>{ const row=document.getElementById('gcalIdRow'); if(!row) return;
-    const id=(settings&&settings.gcalCalId)||await Store.get('psa_gcal_id');
-    if(gcalConnected&&id){ row.style.display='block'; row.innerHTML='Calendario vinculado: <b>'+String(id)+'</b>'; }
-    else row.style.display='none'; })();
 }
 function openAccount(){ if(!cloud.user) return; fillAccountInfo(); show('setScrim'); }
 async function acctChangePass(){
