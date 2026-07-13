@@ -225,15 +225,30 @@ h2{margin:0;font-weight:600}
 .hdricons{display:flex;align-items:center;gap:8px;flex:none}
 
 html[data-theme="dark"]{
-  --bg:#1A1917;--surface:#242320;--ink:#ECE8E0;--muted:#9A9488;--faint:#6B655B;
-  --line:#35332E;--line2:#2C2A26;--brand:#5FB3A1;--brand-soft:#20302C;
-  --cs-prog:#2E2C28;--cs-unpaid:#1E2A38;--cs-tocollect:#3A211B;--cs-collected:#1E3226;--cs-mp:#33202B;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  --bg:#17161A;--surface:#211F26;--ink:#EDEAF2;--muted:#9C97A6;--faint:#6A6577;
+  --line:#312E39;--line2:#282631;--brand:#6FC0AE;--brand-soft:#22322E;
+  --c-prog:#C9C4D4;--cs-prog:#2A2833;
+  --c-unpaid:#6BA8E8;--cs-unpaid:#1C2A3B;
+  --c-tocollect:#E87C68;--cs-tocollect:#3A2320;
+  --c-collected:#63BE84;--cs-collected:#1E3226;
+  --c-mp:#E27BB4;--cs-mp:#331F2B;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.45);
 }
-html[data-theme="dark"] .btn-dangero{background:#242320;color:#e88;border-color:#5a3a36}
-html[data-theme="dark"] .btn-dangero:hover{background:#3a211b}
-html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:var(--surface);color:var(--ink)}
-html[data-theme="dark"] .topbar{background:linear-gradient(var(--bg) 80%,rgba(26,25,23,0))}
+html[data-theme="dark"] body{background:var(--bg)}
+html[data-theme="dark"] .topbar{background:linear-gradient(var(--bg) 82%,rgba(23,22,26,0))}
+html[data-theme="dark"] .card,html[data-theme="dark"] .wkday .row,html[data-theme="dark"] .patrow,html[data-theme="dark"] .mday{background:var(--surface);border-color:var(--line)}
+html[data-theme="dark"] .tabs{background:var(--line2)}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:var(--surface);color:var(--ink);border-color:var(--line)}
+html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::placeholder{color:var(--faint)}
+html[data-theme="dark"] .iconbtn{background:var(--surface);border-color:var(--line)}
+html[data-theme="dark"] .nav{background:var(--surface);border-color:var(--line)}
+html[data-theme="dark"] .sheet{background:var(--surface);color:var(--ink)}
+html[data-theme="dark"] #liqScrim{background:var(--surface)}
+html[data-theme="dark"] #liqScrim .sheet{background:var(--surface)}
+html[data-theme="dark"] .btn-dangero{background:var(--surface);color:#E88;border-color:#5A3A36}
+html[data-theme="dark"] .btn-dangero:hover{background:#3A2320}
+html[data-theme="dark"] .acct{background:var(--brand-soft)}
+html[data-theme="dark"] .sw span{background:var(--line)}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
