@@ -455,7 +455,7 @@ function patientById(id){return patients.find(p=>p.id===id);}
 function hasConflict(s){return sessions.some(o=>o.id!==s.id&&o.date===s.date&&o.time===s.time);}
 /* ---------- Google Calendar (Fase 1: push App -> Calendar) ---------- */
 const GCAL_CLIENT_ID='635576550067-0guc7k5bh0hopod5ahccq230h2tiepn8.apps.googleusercontent.com';
-const GCAL_SCOPE='https://www.googleapis.com/auth/calendar.app.created';
+const GCAL_SCOPE='https://www.googleapis.com/auth/calendar.app.created https://www.googleapis.com/auth/calendar.calendarlist';
 const GCAL_TZ=(function(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'America/Argentina/Buenos_Aires';}catch(e){return 'America/Argentina/Buenos_Aires';}})();
 let gcalClient=null,gcalToken=null,gcalTokenExp=0,gcalConnected=false,gcalCalId=null,_gcalWait=null;
 function gcalInit(){ if(gcalClient)return true; if(!(window.google&&google.accounts&&google.accounts.oauth2))return false;
@@ -469,7 +469,8 @@ function gcalGetToken(interactive){ return new Promise((res,rej)=>{
   _gcalWait={res,rej};
   try{ gcalClient.requestAccessToken({prompt:interactive?'consent':''}); }catch(e){ _gcalWait=null; rej(e); }
 }); }
-async function gcalApi(path,opts){ opts=opts||{}; let t=await gcalGetToken(false);
+async function gcalApi(path,opts){ opts=opts||{}; let t=await gcalGetToken(false).catch(()=>null);
+  if(!t){ if(opts.silent) throw new Error('token-silencioso-no-disponible'); t=await gcalGetToken(true); }
   const doFetch=(tok)=>fetch('https://www.googleapis.com/calendar/v3'+path,{method:opts.method||'GET',headers:{'Authorization':'Bearer '+tok,'Content-Type':'application/json'},body:opts.body});
   let r=await doFetch(t);
   if(r.status===401){ t=await gcalGetToken(true); r=await doFetch(t); }
@@ -498,15 +499,15 @@ function gcalEndTime(date,time,mins){ const a=time.split(':').map(Number); const
   const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())+':00'; }
 async function gcalPush(s){ if(!gcalConnected||!s)return; try{ const cal=await gcalEnsureCal(); const p=patientById(s.patientId);
   const ev={summary:(p?p.name:'Sesion'),start:{dateTime:s.date+'T'+s.time+':00',timeZone:GCAL_TZ},end:{dateTime:gcalEndTime(s.date,s.time,50),timeZone:GCAL_TZ},extendedProperties:{private:{sid:s.id}}};
-  if(s.gcalId){ await gcalApi('/calendars/'+encodeURIComponent(cal)+'/events/'+s.gcalId,{method:'PATCH',body:JSON.stringify(ev)}); }
-  else{ const created=await gcalApi('/calendars/'+encodeURIComponent(cal)+'/events',{method:'POST',body:JSON.stringify(ev)}); s.gcalId=created.id; await saveAll(); }
+  if(s.gcalId){ await gcalApi('/calendars/'+encodeURIComponent(cal)+'/events/'+s.gcalId,{method:'PATCH',silent:true,body:JSON.stringify(ev)}); }
+  else{ const created=await gcalApi('/calendars/'+encodeURIComponent(cal)+'/events',{method:'POST',silent:true,body:JSON.stringify(ev)}); s.gcalId=created.id; await saveAll(); }
  }catch(e){ console.error('gcalPush',e); } }
 async function gcalRemove(s){ if(!gcalConnected||!s||!s.gcalId)return; try{ const cal=await gcalEnsureCal(); await gcalApi('/calendars/'+encodeURIComponent(cal)+'/events/'+s.gcalId,{method:'DELETE'}); }catch(e){ console.error('gcalRemove',e); } }
 async function gcalConnect(){ if(!gcalInit()){ alert('Google todavia esta cargando, proba de nuevo en unos segundos.'); return; }
-  try{ await gcalGetToken(true); gcalConnected=true; await Store.set('psa_gcal_on','1'); await gcalEnsureCal(); gcalUpdateUI();
+  try{ await gcalGetToken(true); gcalConnected=true; settings.gcalOn=true; await Store.set('psa_gcal_on','1'); await gcalEnsureCal(); settings.gcalCalId=gcalCalId; await saveAll(); gcalUpdateUI();
     alert('Conectado a Google Calendar! Ahora toca "Sincronizar ahora" para volcar tus turnos.'); }
   catch(e){ console.error(e); alert('No se pudo conectar con Google Calendar.'); } }
-async function gcalDisconnect(){ gcalConnected=false; gcalToken=null; gcalTokenExp=0; await Store.set('psa_gcal_on','0');
+async function gcalDisconnect(){ gcalConnected=false; gcalToken=null; gcalTokenExp=0; settings.gcalOn=false; await Store.set('psa_gcal_on','0'); await saveAll();
   const reset=confirm('Google Calendar desconectado.\n\n\u00bfQuer\u00e9s adem\u00e1s DESVINCULAR el calendario actual?\n\n\u2022 Aceptar: la pr\u00f3xima vez que conectes se crear\u00e1 un calendario nuevo y se volcar\u00e1n tus turnos ah\u00ed. Eleg\u00ed esto si est\u00e1s migrando.\n\u2022 Cancelar: al reconectar segu\u00eds usando el mismo calendario de siempre.');
   if(reset){ gcalCalId=null; settings.gcalCalId=null; await Store.set('psa_gcal_id',null);
     let n=0; sessions.forEach(s=>{ if(s.gcalId){ delete s.gcalId; n++; } });
@@ -526,7 +527,14 @@ function gcalUpdateUI(){ const st=document.getElementById('gcalState'),cn=docume
   if(cn)cn.style.display=gcalConnected?'none':'inline';
   if(dc)dc.style.display=gcalConnected?'inline':'none';
   if(sy)sy.style.display=gcalConnected?'inline':'none'; const pb=document.getElementById('gcalPullBtn'); if(pb)pb.style.display=gcalConnected?'inline':'none'; }
-async function gcalBoot(){ const on=await Store.get('psa_gcal_on'); if(on==='1')gcalConnected=true; const st=await Store.get('psa_gcal_id'); if(st)gcalCalId=st; gcalUpdateUI(); if(gcalConnected){setTimeout(()=>{gcalPull(true);},3000);} }
+async function gcalBoot(){
+  // Migración suave: si la cuenta ya tenía calendario vinculado (settings), respeta ese estado.
+  // La marca vieja del navegador (psa_gcal_on) NO se usa para conectar: evita que una cuenta nueva herede la conexión de otra.
+  gcalConnected = !!(settings && settings.gcalOn && settings.gcalCalId);
+  gcalCalId = (settings && settings.gcalCalId) || null;
+  gcalUpdateUI();
+  // Nunca auto-sincroniza ni auto-conecta al cargar: Calendar es opcional.
+}
 function normName(s){return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();}
 async function gcalPull(silent){
   if(!gcalConnected){ if(!silent)alert('Conecta Google Calendar primero.'); return; }
