@@ -31,7 +31,7 @@ html,body{margin:0;padding:0;background:#F6F3EC}
 html{color-scheme:light;min-height:100%}
 @media (prefers-color-scheme: dark){html,body{background:#F6F3EC !important;color:#23211D}}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum' 1;padding-bottom:90px}
-.wrap{max-width:980px;margin:0 auto;padding:0 14px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 20px}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 h2{margin:0;font-weight:600}
 
@@ -220,6 +220,22 @@ h2{margin:0;font-weight:600}
 .liqhero{display:flex;justify-content:space-between;align-items:center;background:var(--brand-soft);border-radius:12px;padding:12px 14px;margin:8px 0 12px;font-size:15px}
 .liqhero b{color:var(--brand);font-size:17px}
 @media print{body{background:#fff}body *{visibility:hidden}#liqScrim,#liqScrim *{visibility:visible}#liqScrim{position:absolute;inset:0;display:block;background:#fff;padding:0}#liqScrim .sheet{box-shadow:none;max-height:none;border-radius:0;width:100%;padding:16px}#liqScrim .actions,#liqScrim .liqnav{display:none}}
+
+.advrow{display:flex;gap:10px;margin:4px 0 2px}
+.btn-dangero{flex:1;background:#fff;color:#b3261e;border:1.5px solid #e6c9c4;font-weight:600}
+.btn-dangero:hover{background:#fdecea;border-color:#d99}
+.hdricons{display:flex;align-items:center;gap:8px;flex:none}
+
+html[data-theme="dark"]{
+  --bg:#1A1917;--surface:#242320;--ink:#ECE8E0;--muted:#9A9488;--faint:#6B655B;
+  --line:#35332E;--line2:#2C2A26;--brand:#5FB3A1;--brand-soft:#20302C;
+  --cs-prog:#2E2C28;--cs-unpaid:#1E2A38;--cs-tocollect:#3A211B;--cs-collected:#1E3226;--cs-mp:#33202B;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+}
+html[data-theme="dark"] .btn-dangero{background:#242320;color:#e88;border-color:#5a3a36}
+html[data-theme="dark"] .btn-dangero:hover{background:#3a211b}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:var(--surface);color:var(--ink)}
+html[data-theme="dark"] .topbar{background:linear-gradient(var(--bg) 80%,rgba(26,25,23,0))}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -227,13 +243,13 @@ h2{margin:0;font-weight:600}
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-functions-compat.js"></script>
 </head>
 <body>
-<div class="betabar" id="betaBar">⚠️ VERSIÓN DE PRUEBA — no usés tu cuenta real</div>
+<div class="betabar" id="betaBar">⚠️ VERSIÓN DE PRUEBA — no use su cuenta real</div>
 
 
 <div class="topbar"><div class="wrap">
   <div class="brandrow">
     <div class="brand"><img class="emblem" id="brandLogo" src="" alt="" style="display:none"><div class="brandtext"><span class="mark" id="brandName">Consultorio</span><span class="sub2" id="brandSub"></span></div></div>
-    <button class="iconbtn" id="btnPat" title="Pacientes" style="margin-right:8px">👥</button><button class="iconbtn" id="btnSync" title="Sincronización" style="margin-right:8px">☁</button><button class="iconbtn" id="btnSettings">⚙</button>
+    <div class="hdricons"><button class="iconbtn" id="btnPat" title="Pacientes">👥</button><button class="iconbtn" id="btnSync" title="Sincronización">☁</button><button class="iconbtn" id="btnSettings" title="Ajustes">⚙</button></div>
   </div>
   <div class="navwrap"><div class="navrow">
     <button class="nav" id="prev">‹</button>
@@ -328,13 +344,13 @@ h2{margin:0;font-weight:600}
 <div class="scrim" id="syncScrim"><div class="sheet">
   <h2>Iniciar sesión</h2>
   <div id="syncStep2">
-    <p class="hint" style="margin-bottom:14px">Entrá con tu email y contraseña. Usá la misma cuenta en la computadora y en el celular para ver lo mismo en los dos.</p>
+    <p class="hint" style="margin-bottom:14px">Ingrese con su email y contraseña. Use la misma cuenta en la computadora y en el celular para ver lo mismo en ambos.</p>
     <div class="field"><label>Email</label><input type="email" id="fbEmail" autocomplete="username" placeholder="tu@email.com"></div>
     <div class="field"><label>Contraseña</label><input type="password" id="fbPass" autocomplete="current-password"></div>
     <div id="fbErr" style="color:var(--c-tocollect);font-size:13px;display:none;margin-bottom:8px"></div>
     <div style="margin-bottom:12px;text-align:right"><button class="link" id="fbForgot">¿Olvidaste tu contraseña?</button></div>
     <div class="actions" style="gap:8px"><button class="btn btn-soft" id="fbSignup" style="flex:1">Crear cuenta</button><button class="btn btn-primary" id="fbSignin" style="flex:1">Entrar</button></div>
-    <p class="hint" style="text-align:center;margin-top:14px;font-size:12.5px">¿Primera vez? Creá tu cuenta y probá 7 días gratis, sin tarjeta.</p>
+    <p class="hint" style="text-align:center;margin-top:14px;font-size:12.5px">¿Primera vez? Cree su cuenta y pruebe 7 días gratis, sin tarjeta.</p>
   </div>
   
   </div>
@@ -351,8 +367,6 @@ h2{margin:0;font-weight:600}
     </div>
   </div>
   <div id="acctMsg" style="font-size:13px;display:none;margin:6px 2px;color:var(--c-collected)"></div>
-  <div class="setrow"><span>Sincronización</span><span id="syncStatus" style="font-weight:600;font-size:13px">—</span></div>
-
   <div class="setsec">Mi consultorio</div>
   <div class="field" style="margin-top:6px"><label>Nombre</label><input id="cfgName" placeholder="Consultorio"></div>
   <div class="field"><label>Subtítulo (opcional)</label><input id="cfgSub" placeholder="Ej: Lic. Juan Pérez"></div>
@@ -362,7 +376,8 @@ h2{margin:0;font-weight:600}
   <div class="actions" style="margin:2px 0 4px"><button class="btn btn-soft" id="cfgSave" style="width:100%">Guardar consultorio</button></div>
 
   <div class="setrow"><span>Modo liquidación</span><label class="sw"><input type="checkbox" id="cfgLiq"><span></span></label></div>
-  <div class="hint" style="margin:-2px 2px 6px">Sumá el estado “Liquidado” y el informe mensual. Útil si rendís lo cobrado a un equipo o llevás control de cierre.</div>
+  <div class="hint" style="margin:-2px 2px 6px">Sumá el estado “Liquidado” y el informe mensual. Útil si rinde lo cobrado a un equipo o lleva control de cierre.</div>
+    <div class="setrow"><span>Tema oscuro</span><label class="sw"><input type="checkbox" id="cfgDark"><span></span></label></div>
   <div class="setsec">Copias de seguridad</div>
   <div class="setrow"><span>Copia automática (nube)</span><button class="link" id="openRestore">Restaurar…</button></div>
   <div class="setrow"><span>Backup manual</span><span><button class="link" id="exportData">Exportar</button> · <button class="link" id="importData">Importar</button></span></div><input type="file" id="importFile" accept="application/json,.json" style="display:none">
@@ -371,14 +386,13 @@ h2{margin:0;font-weight:600}
   <div class="setrow"><span id="gcalState" style="color:var(--muted);font-size:14px">—</span><span><button class="link" id="gcalConnect">Conectar</button><button class="link" id="gcalSync" style="display:none">Sincronizar</button> <button class="link" id="gcalPullBtn" style="display:none">Traer turnos</button> <button class="link danger" id="gcalDisconnect" style="display:none">Desconectar</button></span></div>
 
     <div class="setsec" id="secLiq">Informes</div>
-  <div class="setrow" id="rowLiq"><span>Informe mensual</span><button class="link" id="openLiq">Ver / Imprimir</button></div>
+  <div class="setrow" id="rowLiq"><span>Informe de Pagos</span><button class="link" id="openLiq">Ver / Imprimir</button></div>
 
   <div class="setsec">Avanzado</div>
-  <div class="setrow"><span>Reiniciar datos</span><button class="link danger" id="resetData">Borrar todo</button></div>
-  <div class="setrow"><span>Eliminar mi cuenta</span><button class="link danger" id="acctDelete">Eliminar</button></div>
+  <div class="advrow"><button class="btn btn-dangero" id="resetData">Reiniciar datos</button><button class="btn btn-dangero" id="acctDelete">Eliminar mi cuenta</button></div>
 
   <span id="storageMode" style="display:none"></span><span id="storageHint" style="display:none"></span>
-  <div class="actions" style="margin-top:16px"><button class="btn btn-primary" id="setClose">Listo</button></div>
+  <div class="actions" style="margin-top:16px"><button class="btn btn-primary" id="setClose">Aceptar</button></div>
 </div></div>
 
 <div class="scrim" id="liqScrim"><div class="sheet"><div id="liqBody"></div><div class="actions"><button class="btn btn-ghost" id="liqClose">Cerrar</button><button class="btn btn-primary" id="liqPrint">Imprimir / PDF</button></div></div></div>
@@ -391,10 +405,10 @@ h2{margin:0;font-weight:600}
 </div></div>
 <div class="scrim" id="billScrim" style="z-index:90"><div class="sheet">
   <h2>Tu suscripción</h2>
-  <p class="hint" style="margin-bottom:14px">Tu prueba gratuita terminó. Activá tu cuenta para seguir usando el consultorio. Cancelás cuando quieras.</p>
+  <p class="hint" style="margin-bottom:14px">Su prueba gratuita terminó. Active su cuenta para seguir usando el consultorio. El cobro es en dólares (US$ 4/mes); su tarjeta lo convierte a su moneda. Cancele cuando quiera.</p>
   <div class="actions" style="flex-direction:column;gap:10px;align-items:stretch">
     <button class="btn btn-primary" id="billStripe">Pagar USD 4 / mes</button>
-    <button class="btn btn-soft" id="billMp">Pagar $4.000 ARS / mes (Mercado Pago)</button>
+    <button class="btn btn-soft" id="billMp" style="display:none">Pagar $4.000 ARS / mes (Mercado Pago)</button>
   </div>
   <div id="billErr" style="font-size:13px;display:none;margin-top:12px;color:var(--c-tocollect)"></div>
   <div class="actions" style="margin-top:16px;justify-content:center"><button class="link" id="billSignout">Cerrar sesión</button></div>
@@ -402,6 +416,7 @@ h2{margin:0;font-weight:600}
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
+(function(){try{var t=localStorage.getItem('psa_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();
 /* ---------- Storage ---------- */
 const Store={mode:'memory',mem:{},
   async init(){ if(typeof window.storage!=='undefined'&&window.storage){this.mode='cloud';return;}
@@ -721,7 +736,7 @@ function st(k){const s=STATUS[k]||STATUS.prog;return `--c:${s.c};--cs:${s.cs}`;}
 /* ---------- Views ---------- */
 function renderDay(){
   const list=listForDay(selDay);
-  if(!list.length){document.getElementById('content').innerHTML='<div class="empty"><div class="big">🌤️</div><p style="color:var(--ink);font-weight:600">Día libre</p><p>No tenés turnos este día. Sumá uno con ＋.</p></div>';return;}
+  if(!list.length){document.getElementById('content').innerHTML='<div class="empty"><div class="big">🌤️</div><p style="color:var(--ink);font-weight:600">Día libre</p><p>No hay turnos este día. Agregue uno con ＋.</p></div>';return;}
   let html='';
   list.forEach(s=>{const p=patientById(s.patientId),S=STATUS[s.status]||STATUS.prog,cc=COUNTRIES[p?p.country:'']||COUNTRIES[''];
     html+=`<div class="row${hasConflict(s)?' clash':''}" style="${st(s.status)}" onclick="openSession('${s.id}')">
@@ -883,7 +898,7 @@ async function saveSession(){
   if(!patientId||!date||!time)return;
   const price=Number(document.getElementById('fPrice').value)||0,note=document.getElementById('fNote').value.trim(),status=selStatus();
   const clash=sessions.find(o=>(!editing||o.id!==editing.id)&&o.date===date&&o.time===time);
-  if(clash){const cp=patientById(clash.patientId);if(!confirm('⚠️ Ya tenés un turno a las '+fmtTime(time)+' con '+(cp?cp.name:'otro paciente')+'. ¿Querés agendarlo igual?'))return;}
+  if(clash){const cp=patientById(clash.patientId);if(!confirm('⚠️ Ya hay un turno a las '+fmtTime(time)+' con '+(cp?cp.name:'otro paciente')+'. ¿Querés agendarlo igual?'))return;}
   let _touched=[];
   if(editing){Object.assign(editing,{patientId,date,time,price,note,status});_touched=[editing];}
   else{
@@ -1034,7 +1049,7 @@ document.getElementById('reportEdit').onclick=()=>{hide('reportScrim');openPatie
 document.getElementById('btnSettings').onclick=()=>{
   const m={cloud:'En tu cuenta de Claude (sincroniza entre dispositivos)',local:'En este navegador (solo este dispositivo)',memory:'Temporal (esta sesión)'}[Store.mode];
   document.getElementById('storageMode').textContent=m;
-  document.getElementById('storageHint').textContent=Store.mode==='cloud'?'Lo usás dentro de Claude: los datos viven en tu cuenta, así los ves igual en la Mac y en la app de Claude del iPhone.':'Está instalada/abierta en este dispositivo: los datos se guardan acá. Usá Exportar para tener un backup o pasarlos a otro equipo.';
+  document.getElementById('storageHint').textContent=Store.mode==='cloud'?'Se usa dentro de Claude: los datos viven en su cuenta, así los ves igual en la Mac y en la app de Claude del iPhone.':'Está instalada/abierta en este dispositivo: los datos se guardan acá. Usá Exportar para tener un backup o pasarlos a otro equipo.';
   if(!cloud.user){ openSyncSheet(); return; }
   fillAccountInfo(); show('setScrim');};
 document.getElementById('setClose').onclick=()=>hide('setScrim');
@@ -1081,7 +1096,7 @@ async function initCloud(){
 function onLoggedIn(){
   updateSyncBadge('on');
   try{ if(cloud.user&&COURTESY_EMAILS.indexOf((cloud.user.email||'').toLowerCase())>=0){
-    const b=document.getElementById('betaBar'); if(b){ b.textContent='\u26a0\ufe0f BETA \u2014 \u00a1EST\u00c1S CON TU CUENTA REAL! Cerr\u00e1 sesi\u00f3n y us\u00e1 una de prueba'; b.style.background='#7a0d0d'; }
+    const b=document.getElementById('betaBar'); if(b){ b.textContent='\u26a0\ufe0f BETA \u2014 \u00a1EST\u00c1 CON SU CUENTA REAL! Cierre sesi\u00f3n y use una de prueba'; b.style.background='#7a0d0d'; }
   } }catch(e){}
   checkEntitlement();
   patients=[]; sessions=[]; cloud.lastWrite=null; cloud.ready=false;
@@ -1133,7 +1148,7 @@ function trialBanner(){
     el.style.cssText='background:var(--brand-soft);color:var(--brand);font:600 12.5px/1.5 system-ui,sans-serif;text-align:center;padding:7px 10px;cursor:pointer';
     el.onclick=()=>show('billScrim');
     document.body.insertBefore(el, document.body.firstChild); }
-  el.textContent='Prueba gratis \u00b7 '+(t.left===1?'\u00faltimo d\u00eda':'quedan '+t.left+' d\u00edas')+' \u2014 tocá para suscribirte';
+  el.textContent='Prueba gratis \u00b7 '+(t.left===1?'\u00faltimo d\u00eda':'quedan '+t.left+' d\u00edas')+' \u2014 toque para suscribirse';
 }
 function billClear(){
   try{ if(billEntUnsub)billEntUnsub(); }catch(e){}
@@ -1233,6 +1248,7 @@ function fillAccountInfo(){
   if(cs) cs.value=settings.clinicSub||'';
   if(cc) cc.value=settings.currency||'USD';
   const cl=document.getElementById('cfgLiq'); if(cl) cl.checked=liqOn();
+  const cd=document.getElementById('cfgDark'); if(cd) cd.checked=document.documentElement.getAttribute('data-theme')==='dark';
 }
 function openAccount(){ if(!cloud.user) return; fillAccountInfo(); show('setScrim'); }
 async function acctChangePass(){
@@ -1249,7 +1265,7 @@ async function acctManageSub(){
 }
 async function acctDeleteAccount(){
   const u=cloud.user; if(!u) return;
-  if(!confirm('¿Seguro que querés eliminar tu cuenta y todos tus datos? Esta acción no se puede deshacer.')) return;
+  if(!confirm('¿Seguro que desea eliminar su cuenta y todos sus datos? Esta acción no se puede deshacer.')) return;
   try{
     try{ await cloud.db.collection('consultas').doc(u.uid).delete(); }catch(e){}
     await u.delete();
@@ -1262,12 +1278,12 @@ async function acctDeleteAccount(){
 async function fbForgot(){
   const em=(document.getElementById('fbEmail').value||'').trim();
   const errEl=document.getElementById('fbErr');
-  if(!em){ errEl.style.display='block'; errEl.style.color='var(--c-tocollect)'; errEl.textContent='Escribí tu email arriba y volvé a tocar.'; return; }
+  if(!em){ errEl.style.display='block'; errEl.style.color='var(--c-tocollect)'; errEl.textContent='Escriba su email arriba e intente de nuevo.'; return; }
   try{ await cloud.auth.sendPasswordResetEmail(em); errEl.style.display='block'; errEl.style.color='var(--c-collected)'; errEl.textContent='Te enviamos un email para recuperar la contraseña.'; }
   catch(e){ errEl.style.display='block'; errEl.style.color='var(--c-tocollect)'; errEl.textContent='No pudimos enviar el email. Revisá que esté bien escrito.'; }
 }
 function fbErrMsg(e){ const c=(e&&e.code)||''; 
-  if(/invalid-credential|wrong-password|user-not-found/.test(c)) return 'Email o contraseña incorrectos. Si es tu primera vez, tocá "Crear cuenta".';
+  if(/invalid-credential|wrong-password|user-not-found/.test(c)) return 'Email o contraseña incorrectos. Si es su primera vez, elija "Crear cuenta".';
   if(/email-already-in-use/.test(c)) return 'Ese email ya tiene cuenta. Tocá "Entrar".';
   if(/weak-password/.test(c)) return 'La contraseña debe tener al menos 6 caracteres.';
   if(/invalid-email/.test(c)) return 'El email no parece válido.';
@@ -1312,6 +1328,7 @@ document.getElementById('logoFile').onchange=e=>{ const f=e.target.files[0]; if(
     settings.logo=cv.toDataURL('image/png'); await saveAll(); applyBranding();
   }; img.onerror=()=>alert('No pude leer la imagen.'); img.src=r.result; };
   r.readAsDataURL(f); e.target.value=''; };
+document.getElementById('cfgDark').onchange=function(){ const on=this.checked; document.documentElement.setAttribute('data-theme', on?'dark':'light'); try{localStorage.setItem('psa_theme', on?'dark':'light');}catch(e){} };
 document.getElementById('openRestore').onclick=openRestore;
 document.getElementById('restoreClose').onclick=()=>hide('restoreScrim');
 document.getElementById('acctPass').onclick=acctChangePass;
