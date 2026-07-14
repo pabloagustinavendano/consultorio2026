@@ -489,7 +489,7 @@ function hasConflict(s){return sessions.some(o=>o.id!==s.id&&o.date===s.date&&o.
 const GCAL_CLIENT_ID='635576550067-0guc7k5bh0hopod5ahccq230h2tiepn8.apps.googleusercontent.com';
 const GCAL_SCOPE='https://www.googleapis.com/auth/calendar.app.created https://www.googleapis.com/auth/calendar.calendarlist';
 const GCAL_TZ=(function(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'America/Argentina/Buenos_Aires';}catch(e){return 'America/Argentina/Buenos_Aires';}})();
-let gcalClient=null,gcalToken=null,gcalTokenExp=0,gcalConnected=false,gcalCalId=null,_gcalWait=null;
+let gcalClient=null,gcalToken=null,gcalTokenExp=0,gcalConnected=false,gcalCalId=null,_gcalWait=null,_gcalAutoLast=0;
 function gcalInit(){ if(gcalClient)return true; if(!(window.google&&google.accounts&&google.accounts.oauth2))return false;
   gcalClient=google.accounts.oauth2.initTokenClient({client_id:GCAL_CLIENT_ID,scope:GCAL_SCOPE,callback:(resp)=>{
     if(resp&&resp.access_token){gcalToken=resp.access_token;gcalTokenExp=Date.now()+((resp.expires_in||3600)*1000)-60000;if(_gcalWait){_gcalWait.res(gcalToken);_gcalWait=null;}}
@@ -577,7 +577,21 @@ async function gcalBoot(){
   gcalConnected = !!(settings && settings.gcalOn && settings.gcalCalId);
   gcalCalId = (settings && settings.gcalCalId) || null;
   gcalUpdateUI();
-  // Nunca auto-sincroniza ni auto-conecta al cargar: Calendar es opcional.
+  // Nunca auto-CONECTA (no dispara OAuth ni popups). Si ya está conectado, baja cambios en silencio (jamás borra solo).
+  if(gcalConnected) setTimeout(function(){ gcalAutoSync(); }, 1200);
+}
+// Auto-sync seguro: trae cambios de Google Calendar sin intervención.
+// - Solo corre si consigue token EN SILENCIO (si no, no hace nada: cero popups).
+// - Importa turnos nuevos y aplica reprogramaciones; NUNCA borra (silent=true saltea el borrado).
+// - Throttle de 45s para no golpear la API de Google.
+async function gcalAutoSync(){
+  if(!gcalConnected) return;
+  if(typeof document!=='undefined' && document.hidden) return;
+  var now=Date.now(); if(now-_gcalAutoLast<45000) return;
+  var tok=(gcalToken&&Date.now()<gcalTokenExp)?gcalToken:await gcalGetToken(false).catch(function(){return null;});
+  if(!tok) return;
+  _gcalAutoLast=now;
+  try{ await gcalPull(true,true,false); }catch(e){ console.warn('gcalAutoSync',e); }
 }
 function normName(s){return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();}
 async function gcalPull(silent,noAlert,confirmAny){
@@ -1069,6 +1083,8 @@ document.getElementById('liqPrint').onclick=()=>window.print();
 document.getElementById('gcalConnect').onclick=gcalConnect;
 document.getElementById('gcalDisconnect').onclick=gcalDisconnect;
 document.getElementById('gcalSync').onclick=gcalSyncBoth;
+document.addEventListener('visibilitychange',function(){ if(!document.hidden) gcalAutoSync(); });
+window.addEventListener('focus',function(){ gcalAutoSync(); });
 document.getElementById('reportEdit').onclick=()=>{hide('reportScrim');openPatient(reportId);};
 ['sessScrim','patScrim','setScrim','syncScrim','reportScrim','liqScrim'].forEach(id=>document.getElementById(id).onclick=e=>{if(e.target.id===id)hide(id);});
 document.getElementById('btnSettings').onclick=()=>{
