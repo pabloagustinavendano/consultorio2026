@@ -385,7 +385,6 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   <div class="setrow"><span>Logo</span><span><button class="link" id="logoPick">Cambiar</button> · <button class="link danger" id="logoClear">Quitar</button></span></div>
   <input type="file" id="logoFile" accept="image/*" style="display:none">
   <div class="field"><label>Moneda principal</label><select id="cfgCur"><option value="USD">US$ (dólar)</option><option value="ARS">AR$ (peso argentino)</option><option value="EUR">€ (euro)</option></select></div>
-  <div class="actions" style="margin:2px 0 4px"><button class="btn btn-soft" id="cfgSave" style="width:100%">Guardar consultorio</button></div>
 
   <div class="setrow"><span>Modo liquidación</span><label class="sw"><input type="checkbox" id="cfgLiq"><span></span></label></div>
   <div class="hint" style="margin:-2px 2px 6px">Sumá el estado “Liquidado” y el informe mensual. Útil si rinde lo cobrado a un equipo o lleva control de cierre.</div>
@@ -1064,7 +1063,7 @@ document.getElementById('btnSettings').onclick=()=>{
   document.getElementById('storageHint').textContent=Store.mode==='cloud'?'Se usa dentro de Claude: los datos viven en su cuenta, así los ves igual en la Mac y en la app de Claude del iPhone.':'Está instalada/abierta en este dispositivo: los datos se guardan acá. Usá Exportar para tener un backup o pasarlos a otro equipo.';
   if(!cloud.user){ openSyncSheet(); return; }
   fillAccountInfo(); show('setScrim');};
-document.getElementById('setClose').onclick=()=>hide('setScrim');
+document.getElementById('setClose').onclick=async()=>{ await saveClinic(); hide('setScrim'); };
 document.getElementById('resetData').onclick=async()=>{if(!confirm('Borra TODO y vuelve a los datos de ejemplo. ¿Seguro?'))return;seed();await saveAll();hide('setScrim');render();};
 
 document.getElementById('exportData').onclick=()=>{
@@ -1319,14 +1318,13 @@ var _bm=document.getElementById('billMp'); if(_bm)_bm.onclick=billStartMp;
 var _bo=document.getElementById('billSignout'); if(_bo)_bo.onclick=()=>{ if(cloud.auth)cloud.auth.signOut(); };
 document.getElementById('fbSignup').onclick=()=>fbAuth(true);
 document.getElementById('fbForgot').onclick=fbForgot;
-document.getElementById('cfgSave').onclick=async()=>{
+async function saveClinic(){
   settings.clinicName=document.getElementById('cfgName').value.trim()||'Consultorio';
   settings.clinicSub=document.getElementById('cfgSub').value.trim();
   settings.currency=document.getElementById('cfgCur').value||'USD';
   settings.liqMode=document.getElementById('cfgLiq').checked;
   await saveAll(); applyBranding(); render();
-  const m=document.getElementById('acctMsg'); m.style.display='block'; m.textContent='Guardado ✓'; setTimeout(()=>{m.style.display='none';},1800);
-};
+}
 document.getElementById('logoPick').onclick=()=>document.getElementById('logoFile').click();
 document.getElementById('logoClear').onclick=async()=>{ settings.logo=''; await saveAll(); applyBranding(); };
 document.getElementById('logoFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
