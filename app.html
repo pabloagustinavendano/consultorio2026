@@ -190,6 +190,9 @@ h2{margin:0;font-weight:600}
 .sw input:checked + span:before{transform:translateX(18px)}
 .setsec{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--brand);margin:18px 2px 4px;display:flex;align-items:center;gap:7px}
 .setsec::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--brand);display:inline-block;opacity:.8}
+.sheet.setpanel{background:var(--bg)}
+html[data-theme="dark"] .sheet.setpanel{background:var(--bg)}
+.setgroup{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px 14px;margin:0 2px 12px;box-shadow:var(--shadow)}
 .acctcard{background:var(--brand-soft);border-radius:12px;padding:12px 14px;margin:2px 0 6px}
 .acctcard .em{font-weight:700;color:var(--ink);font-size:15px;word-break:break-word}
 .acctcard .pl{font-size:12.5px;font-weight:700;color:var(--brand);margin-top:3px}
@@ -384,7 +387,7 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   
   </div>
 </div></div>
-<div class="scrim" id="setScrim"><div class="sheet">
+<div class="scrim" id="setScrim"><div class="sheet setpanel">
   <h2>Ajustes</h2>
   <div class="acctcard">
     <div class="em" id="acctEmail">—</div>
@@ -397,24 +400,33 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   </div>
   <div id="acctMsg" style="font-size:13px;display:none;margin:6px 2px;color:var(--c-collected)"></div>
   <div class="setsec">Mi consultorio</div>
-  <div class="field" style="margin-top:6px"><label>Nombre</label><input id="cfgName" placeholder="Consultorio"></div>
+  <div class="setgroup">
+  <div class="field" style="margin-top:2px"><label>Nombre</label><input id="cfgName" placeholder="Consultorio"></div>
   <div class="field"><label>Subtítulo (opcional)</label><input id="cfgSub" placeholder="Ej: Lic. Juan Pérez"></div>
   <div class="setrow"><span>Logo</span><span><button class="link" id="logoPick">Cambiar</button> · <button class="link danger" id="logoClear">Quitar</button></span></div>
-  <input type="file" id="logoFile" accept="image/*" style="display:none">
   <div class="field"><label>Moneda principal</label><select id="cfgCur"><option value="USD">US$ (dólar)</option><option value="ARS">AR$ (peso argentino)</option><option value="EUR">€ (euro)</option></select></div>
+  </div>
+  <input type="file" id="logoFile" accept="image/*" style="display:none">
 
   <div class="setsec">Copias de seguridad</div>
+  <div class="setgroup">
   <div class="setrow"><span>Copia automática (nube)</span><button class="link" id="openRestore">Restaurar…</button></div>
-  <div class="setrow"><span>Backup manual</span><span><button class="link" id="exportData">Exportar</button> · <button class="link" id="importData">Importar</button></span></div><input type="file" id="importFile" accept="application/json,.json" style="display:none">
+  <div class="setrow"><span>Backup manual</span><span><button class="link" id="exportData">Exportar</button> · <button class="link" id="importData">Importar</button></span></div>
+  </div>
+  <input type="file" id="importFile" accept="application/json,.json" style="display:none">
 
   <div class="setsec">Google Calendar</div>
+  <div class="setgroup">
   <div class="setrow"><span id="gcalState" style="color:var(--muted);font-size:14px">—</span><span><button class="link" id="gcalConnect">Conectar</button><button class="link" id="gcalSync" style="display:none">Sincronizar</button> <button class="link danger" id="gcalDisconnect" style="display:none">Desconectar</button></span></div>
-  <div class="hint" id="gcalHint" style="margin:-2px 2px 8px"></div>
+  <div class="hint" id="gcalHint" style="margin:4px 2px 2px"></div>
+  </div>
 
-    <div class="setsec" id="secLiq">Informe de pagos</div>
+  <div class="setsec" id="secLiq">Informe de pagos</div>
+  <div class="setgroup">
   <div class="setrow"><span>Modo liquidación</span><label class="sw"><input type="checkbox" id="cfgLiq"><span></span></label></div>
-  <div class="hint" style="margin:-2px 2px 6px">Suma el estado “Liquidado” y el cierre por período. Útil si rendís lo cobrado a un equipo.</div>
+  <div class="hint" style="margin:2px 2px 4px">Suma el estado “Liquidado” y el cierre por período. Útil si rendís lo cobrado a un equipo.</div>
   <div class="setrow" id="rowLiq"><span>Ver informe</span><button class="link" id="openLiq">Ver</button></div>
+  </div>
 
   <div class="setsec">Avanzado</div>
   <div class="advrow"><button class="btn btn-dangero" id="resetData">Reiniciar datos</button><button class="btn btn-dangero" id="acctDelete">Eliminar mi cuenta</button></div>
@@ -422,7 +434,7 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   <span id="storageMode" style="display:none"></span><span id="storageHint" style="display:none"></span>
   <div class="actions" style="margin-top:16px"><button class="btn btn-primary" id="setClose">Aceptar</button></div>
 </div></div>
-<div class="scrim" id="lookScrim"><div class="sheet">
+<div class="scrim" id="lookScrim"><div class="sheet setpanel">
   <h2>Apariencia</h2>
   <div class="setsec">Tema</div>
   <div class="themegrid">
@@ -430,8 +442,10 @@ html[data-theme="dark"] .sw span{background:var(--line)}
     <div class="themeopt" data-skin="papel"><div class="tprev" style="background:#F6F3EC"><div class="tbar" style="background:#2F6F62"></div><div class="tcard" style="background:#FFFFFF;border:.5px solid #E7E1D5"><div class="tchip" style="background:#E4EFEB"></div></div></div><div class="tname">Papel</div><span class="tick">✓</span></div>
     <div class="themeopt" data-skin="arena"><div class="tprev" style="background:#F1E7D8"><div class="tbar" style="background:#B4664A"></div><div class="tcard" style="background:#FBF6EE;border:.5px solid #E4D6C2"><div class="tchip" style="background:#F3E3D3"></div></div></div><div class="tname">Arena</div><span class="tick">✓</span></div>
   </div>
+  <div class="setgroup" style="margin-top:4px">
   <div class="setrow"><span>Modo oscuro</span><label class="sw"><input type="checkbox" id="cfgDark"><span></span></label></div>
-  <div class="hint" style="margin:-2px 2px 6px">El modo oscuro se aplica sobre cualquier tema.</div>
+  <div class="hint" style="margin:2px 2px 4px">El modo oscuro se aplica sobre cualquier tema.</div>
+  </div>
   <div class="actions" style="margin-top:16px"><button class="btn btn-primary" id="lookClose">Aceptar</button></div>
 </div></div>
 
