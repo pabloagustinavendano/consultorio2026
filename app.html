@@ -28,8 +28,8 @@
 html,body{margin:0;padding:0;background:var(--bg)}
 html{color-scheme:light;min-height:100%}
 html[data-theme="dark"]{color-scheme:dark}
-html[data-skin="nieve"]{--bg:#F3F6F8;--surface:#FFFFFF;--ink:#1F2933;--muted:#6B7580;--faint:#A3ABB4;--line:#E4E9ED;--line2:#F1F4F6;--brand:#2E6E8E;--brand-soft:#E2EEF3}
-html[data-skin="arena"]{--bg:#F1E7D8;--surface:#FBF6EE;--ink:#3A2E24;--muted:#8A7358;--faint:#B8A88F;--line:#E4D6C2;--line2:#EFE6D6;--brand:#B4664A;--brand-soft:#F3E3D3}
+html[data-skin="nieve"]{--bg:#F3F6F8;--surface:#FFFFFF;--ink:#1F2933;--muted:#6B7580;--faint:#A3ABB4;--line:#E4E9ED;--line2:#F1F4F6;--brand:#2E6E8E;--brand-soft:#E2EEF3;--c-prog:#3A4450;--cs-prog:#EAEDF0;--c-unpaid:#3F86CF;--cs-unpaid:#E6EFFA;--c-tocollect:#CF5138;--cs-tocollect:#FAE6E0;--c-collected:#2F9E77;--cs-collected:#E1F2EC}
+html[data-skin="arena"]{--bg:#F1E7D8;--surface:#FBF6EE;--ink:#3A2E24;--muted:#8A7358;--faint:#B8A88F;--line:#E4D6C2;--line2:#EFE6D6;--brand:#B4664A;--brand-soft:#F3E3D3;--c-prog:#5A4B3A;--cs-prog:#EBE1D0;--c-unpaid:#3F6E86;--cs-unpaid:#E4E8E1;--c-tocollect:#B4512F;--cs-tocollect:#F3DFCE;--c-collected:#5E7A3E;--cs-collected:#E8E9D2;--c-mp:#B05A86;--cs-mp:#F1DCE4}
 
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum' 1;padding-bottom:90px}
 .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
@@ -188,7 +188,8 @@ h2{margin:0;font-weight:600}
 .sw span:before{content:"";position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
 .sw input:checked + span{background:var(--brand)}
 .sw input:checked + span:before{transform:translateX(18px)}
-.setsec{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin:16px 2px 2px}
+.setsec{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--brand);margin:18px 2px 4px;display:flex;align-items:center;gap:7px}
+.setsec::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--brand);display:inline-block;opacity:.8}
 .acctcard{background:var(--brand-soft);border-radius:12px;padding:12px 14px;margin:2px 0 6px}
 .acctcard .em{font-weight:700;color:var(--ink);font-size:15px;word-break:break-word}
 .acctcard .pl{font-size:12.5px;font-weight:700;color:var(--brand);margin-top:3px}
