@@ -661,13 +661,13 @@ async function gcalPull(silent,noAlert,confirmAny){
       added++;
     }
     let removed=0;
-    if(!silent && items.length>0){
+    if(!silent){
       const present=new Set(items.filter(e=>e.status!=='cancelled').map(e=>e.id));
       const _wMin=ymd(new Date(REALTODAY.getFullYear(),REALTODAY.getMonth(),1)),_wMax=ymd(new Date(REALTODAY.getFullYear(),REALTODAY.getMonth()+6,1));
       const cand=sessions.filter(s=>s.gcalId&&s.date>=_wMin&&s.date<_wMax&&!present.has(s.gcalId));
       const linked=sessions.filter(s=>s.gcalId&&s.date>=_wMin&&s.date<_wMax).length;
       let ok=true;
-      if(cand.length>0 && (confirmAny || cand.length>3 || (linked>0 && cand.length/linked>0.5))){
+      if(cand.length>0){
         ok=confirm('Atenci\u00f3n: '+cand.length+' turno(s) ya no est\u00e1n en Google Calendar y se borrar\u00edan de la app.\n\nSi borraste o cambiaste el calendario, toc\u00e1 Cancelar.\n\n\u00bfBorrar esos turnos?');
       }
       if(ok && cand.length){ const del=new Set(cand.map(s=>s.id)); sessions=sessions.filter(s=>!del.has(s.id)); removed=cand.length; }
