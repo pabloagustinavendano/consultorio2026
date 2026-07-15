@@ -28,6 +28,8 @@
 html,body{margin:0;padding:0;background:var(--bg)}
 html{color-scheme:light;min-height:100%}
 html[data-theme="dark"]{color-scheme:dark}
+html[data-skin="nieve"]{--bg:#F3F6F8;--surface:#FFFFFF;--ink:#1F2933;--muted:#6B7580;--faint:#A3ABB4;--line:#E4E9ED;--line2:#F1F4F6;--brand:#2E6E8E;--brand-soft:#E2EEF3}
+html[data-skin="arena"]{--bg:#F1E7D8;--surface:#FBF6EE;--ink:#3A2E24;--muted:#8A7358;--faint:#B8A88F;--line:#E4D6C2;--line2:#EFE6D6;--brand:#B4664A;--brand-soft:#F3E3D3}
 
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum' 1;padding-bottom:90px}
 .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
@@ -97,6 +99,18 @@ h2{margin:0;font-weight:600}
 .day .dnum .dn{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px}
 .day.today .dnum .dn{background:var(--brand);color:#fff;border-radius:50%}
 .dcount{font-size:10px;font-weight:700;color:var(--muted);background:var(--line2);border-radius:99px;padding:1px 7px}
+.day .dcnt{font-size:10px;font-weight:600;color:var(--brand);margin-top:3px;display:flex;align-items:center;gap:4px}
+.day .dcnt::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brand);display:inline-block}
+.themegrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 2px 6px}
+.themeopt{cursor:pointer;border:2px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);position:relative}
+.themeopt.sel{border-color:var(--brand)}
+.themeopt .tprev{padding:7px}
+.themeopt .tbar{height:8px;border-radius:3px;margin-bottom:5px}
+.themeopt .tcard{border-radius:5px;height:26px;padding:4px}
+.themeopt .tchip{height:6px;border-radius:2px;width:70%}
+.themeopt .tname{font-size:12px;text-align:center;padding:5px 0 7px;font-weight:600;color:var(--ink)}
+.themeopt .tick{position:absolute;top:5px;right:5px;width:16px;height:16px;border-radius:50%;background:var(--brand);color:#fff;display:none;align-items:center;justify-content:center;font-size:11px;line-height:1}
+.themeopt.sel .tick{display:flex}
 .dfoot{margin-top:auto;padding-top:3px;font-size:11px;font-weight:700;color:var(--c-collected);text-align:right}
 .weekendnote{margin-top:12px;font-size:12px;color:var(--muted);text-align:center;background:var(--surface);border-radius:10px;padding:9px;box-shadow:var(--shadow)}
 .day.today{outline:2px solid var(--brand);outline-offset:-2px}
@@ -235,6 +249,8 @@ html[data-theme="dark"]{
   --c-mp:#E27BB4;--cs-mp:#331F2B;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.45);
 }
+html[data-theme="dark"][data-skin="nieve"]{--brand:#6FB7D8;--brand-soft:#1C2F3A}
+html[data-theme="dark"][data-skin="arena"]{--brand:#D98E6E;--brand-soft:#33231B}
 html[data-theme="dark"],html[data-theme="dark"] body{background:var(--bg)!important}
 html[data-theme="dark"] .topbar{background:linear-gradient(var(--bg) 82%,rgba(23,22,26,0))}
 html[data-theme="dark"] .card,html[data-theme="dark"] .wkday .row,html[data-theme="dark"] .patrow,html[data-theme="dark"] .mday{background:var(--surface);border-color:var(--line)}
@@ -261,7 +277,7 @@ html[data-theme="dark"] .sw span{background:var(--line)}
 <div class="topbar"><div class="wrap">
   <div class="brandrow">
     <div class="brand"><img class="emblem" id="brandLogo" src="" alt="" style="display:none"><div class="brandtext"><span class="mark" id="brandName">Consultorio</span><span class="sub2" id="brandSub"></span></div></div>
-    <div class="hdricons"><button class="iconbtn" id="btnPat" title="Pacientes">👥</button><button class="iconbtn" id="btnSync" title="Sincronización">☁</button><button class="iconbtn" id="btnSettings" title="Ajustes">⚙</button></div>
+    <div class="hdricons"><button class="iconbtn" id="btnPat" title="Pacientes">👥</button><button class="iconbtn" id="btnSync" title="Sincronización">☁</button><button class="iconbtn" id="btnLook" title="Apariencia">🎨</button><button class="iconbtn" id="btnSettings" title="Ajustes">⚙</button></div>
   </div>
   <div class="navwrap"><div class="navrow">
     <button class="nav" id="prev">‹</button>
@@ -386,9 +402,6 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   <input type="file" id="logoFile" accept="image/*" style="display:none">
   <div class="field"><label>Moneda principal</label><select id="cfgCur"><option value="USD">US$ (dólar)</option><option value="ARS">AR$ (peso argentino)</option><option value="EUR">€ (euro)</option></select></div>
 
-  <div class="setrow"><span>Modo liquidación</span><label class="sw"><input type="checkbox" id="cfgLiq"><span></span></label></div>
-  <div class="hint" style="margin:-2px 2px 6px">Sumá el estado “Liquidado” y el informe mensual. Útil si rinde lo cobrado a un equipo o lleva control de cierre.</div>
-    <div class="setrow"><span>Tema oscuro</span><label class="sw"><input type="checkbox" id="cfgDark"><span></span></label></div>
   <div class="setsec">Copias de seguridad</div>
   <div class="setrow"><span>Copia automática (nube)</span><button class="link" id="openRestore">Restaurar…</button></div>
   <div class="setrow"><span>Backup manual</span><span><button class="link" id="exportData">Exportar</button> · <button class="link" id="importData">Importar</button></span></div><input type="file" id="importFile" accept="application/json,.json" style="display:none">
@@ -397,8 +410,10 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   <div class="setrow"><span id="gcalState" style="color:var(--muted);font-size:14px">—</span><span><button class="link" id="gcalConnect">Conectar</button><button class="link" id="gcalSync" style="display:none">Sincronizar</button> <button class="link danger" id="gcalDisconnect" style="display:none">Desconectar</button></span></div>
   <div class="hint" id="gcalHint" style="margin:-2px 2px 8px"></div>
 
-    <div class="setsec" id="secLiq">Informes</div>
-  <div class="setrow" id="rowLiq"><span>Informe de Pagos</span><button class="link" id="openLiq">Ver / Imprimir</button></div>
+    <div class="setsec" id="secLiq">Informe de pagos</div>
+  <div class="setrow"><span>Modo liquidación</span><label class="sw"><input type="checkbox" id="cfgLiq"><span></span></label></div>
+  <div class="hint" style="margin:-2px 2px 6px">Suma el estado “Liquidado” y el cierre por período. Útil si rendís lo cobrado a un equipo.</div>
+  <div class="setrow" id="rowLiq"><span>Ver informe</span><button class="link" id="openLiq">Ver</button></div>
 
   <div class="setsec">Avanzado</div>
   <div class="advrow"><button class="btn btn-dangero" id="resetData">Reiniciar datos</button><button class="btn btn-dangero" id="acctDelete">Eliminar mi cuenta</button></div>
@@ -406,8 +421,20 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   <span id="storageMode" style="display:none"></span><span id="storageHint" style="display:none"></span>
   <div class="actions" style="margin-top:16px"><button class="btn btn-primary" id="setClose">Aceptar</button></div>
 </div></div>
+<div class="scrim" id="lookScrim"><div class="sheet">
+  <h2>Apariencia</h2>
+  <div class="setsec">Tema</div>
+  <div class="themegrid">
+    <div class="themeopt" data-skin="nieve"><div class="tprev" style="background:#F3F6F8"><div class="tbar" style="background:#2E6E8E"></div><div class="tcard" style="background:#FFFFFF;border:.5px solid #E4E9ED"><div class="tchip" style="background:#E2EEF3"></div></div></div><div class="tname">Nieve</div><span class="tick">✓</span></div>
+    <div class="themeopt" data-skin="papel"><div class="tprev" style="background:#F6F3EC"><div class="tbar" style="background:#2F6F62"></div><div class="tcard" style="background:#FFFFFF;border:.5px solid #E7E1D5"><div class="tchip" style="background:#E4EFEB"></div></div></div><div class="tname">Papel</div><span class="tick">✓</span></div>
+    <div class="themeopt" data-skin="arena"><div class="tprev" style="background:#F1E7D8"><div class="tbar" style="background:#B4664A"></div><div class="tcard" style="background:#FBF6EE;border:.5px solid #E4D6C2"><div class="tchip" style="background:#F3E3D3"></div></div></div><div class="tname">Arena</div><span class="tick">✓</span></div>
+  </div>
+  <div class="setrow"><span>Modo oscuro</span><label class="sw"><input type="checkbox" id="cfgDark"><span></span></label></div>
+  <div class="hint" style="margin:-2px 2px 6px">El modo oscuro se aplica sobre cualquier tema.</div>
+  <div class="actions" style="margin-top:16px"><button class="btn btn-primary" id="lookClose">Aceptar</button></div>
+</div></div>
 
-<div class="scrim" id="liqScrim"><div class="sheet"><div id="liqBody"></div><div class="actions"><button class="btn btn-ghost" id="liqClose">Cerrar</button><button class="btn btn-primary" id="liqPrint">Imprimir / PDF</button></div></div></div>
+<div class="scrim" id="liqScrim"><div class="sheet"><div id="liqBody"></div><div class="actions"><button class="btn btn-primary" id="liqClose">Cerrar</button></div></div></div>
 
 <div class="scrim" id="restoreScrim"><div class="sheet">
   <h2>Restaurar desde copia</h2>
@@ -428,7 +455,7 @@ html[data-theme="dark"] .sw span{background:var(--line)}
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
-(function(){try{var t=localStorage.getItem('psa_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();
+(function(){try{var t=localStorage.getItem('psa_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');var s=localStorage.getItem('psa_skin');if(s)document.documentElement.setAttribute('data-skin',s);}catch(e){}})();
 /* ---------- Storage ---------- */
 const Store={mode:'memory',mem:{},
   async init(){ if(typeof window.storage!=='undefined'&&window.storage){this.mode='cloud';return;}
@@ -813,11 +840,11 @@ function renderCal(){
     ses.slice(0,7).forEach(s=>{const pp=patientById(s.patientId);
       chips+=`<div class="chip${hasConflict(s)?' clash':''}" data-sid="${s.id}" style="${st(s.status)}"><span class="t">${fmtTime(s.time)}</span><span class="n">${pp?((COUNTRIES[pp.country]||COUNTRIES['']).f+' '+esc(pp.name)):'—'}</span>${hasConflict(s)?' ⚠️':''}${(pp&&pp.pending)?' ❓':''}</div>`;});
     if(ses.length>7) chips+=`<div class="more">+${ses.length-7} más</div>`;
-    const cnt=ses.length?`<span class="dcount">${ses.length}</span>`:'';
+    const cnt=ses.length?`<div class="dcnt">${ses.length} turno${ses.length>1?'s':''}</div>`:'';
     const dsum=summaryOf(ses);
     const fp=[];if(dsum.usd.cobr>0)fp.push('US$ '+dsum.usd.cobr.toLocaleString('es-AR'));if(dsum.ars.cobr>0)fp.push('$ '+(dsum.ars.cobr>=1000?Math.round(dsum.ars.cobr/1000)+'k':dsum.ars.cobr));
     const foot=fp.length?`<div class="dfoot">${fp.join(' · ')}</div>`:'';
-    html+=`<div class="day${isT?' today':''}" data-date="${ds}"><div class="dnum"><span class="dn">${d}</span>${cnt}</div>${chips}${foot}</div>`;
+    html+=`<div class="day${isT?' today':''}" data-date="${ds}"><div class="dnum"><span class="dn">${d}</span></div>${chips}${cnt}${foot}</div>`;
   }
   html+='</div>';
   if(weekendCount>0) html+=`<div class="weekendnote">Hay ${weekendCount} turno${weekendCount>1?'s':''} en fin de semana. Abrilos desde <b>Mi día</b> moviéndote con las flechas.</div>`;
@@ -1069,12 +1096,11 @@ document.getElementById('patDelete').onclick=deletePatient;
 document.getElementById('reportClose').onclick=()=>hide('reportScrim');
 document.getElementById('openLiq').onclick=()=>{hide('setScrim');liqYM=ymd(REALTODAY).slice(0,7);openLiquidacion();};
 document.getElementById('liqClose').onclick=()=>hide('liqScrim');
-document.getElementById('liqPrint').onclick=()=>window.print();
 document.getElementById('gcalConnect').onclick=gcalConnect;
 document.getElementById('gcalDisconnect').onclick=gcalDisconnect;
 document.getElementById('gcalSync').onclick=gcalSyncBoth;
 document.getElementById('reportEdit').onclick=()=>{hide('reportScrim');openPatient(reportId);};
-['sessScrim','patScrim','setScrim','syncScrim','reportScrim','liqScrim'].forEach(id=>document.getElementById(id).onclick=e=>{if(e.target.id===id)hide(id);});
+['sessScrim','patScrim','setScrim','syncScrim','reportScrim','liqScrim','lookScrim'].forEach(id=>document.getElementById(id).onclick=e=>{if(e.target.id===id)hide(id);});
 document.getElementById('btnSettings').onclick=()=>{
   const m={cloud:'En tu cuenta de Claude (sincroniza entre dispositivos)',local:'En este navegador (solo este dispositivo)',memory:'Temporal (esta sesión)'}[Store.mode];
   document.getElementById('storageMode').textContent=m;
@@ -1354,6 +1380,10 @@ document.getElementById('logoFile').onchange=e=>{ const f=e.target.files[0]; if(
   }; img.onerror=()=>alert('No pude leer la imagen.'); img.src=r.result; };
   r.readAsDataURL(f); e.target.value=''; };
 document.getElementById('cfgDark').onchange=function(){ const on=this.checked; document.documentElement.setAttribute('data-theme', on?'dark':'light'); try{localStorage.setItem('psa_theme', on?'dark':'light');}catch(e){} };
+function applySkin(skin){ skin=skin||'papel'; document.documentElement.setAttribute('data-skin',skin); try{localStorage.setItem('psa_skin',skin);}catch(e){} document.querySelectorAll('#lookScrim .themeopt').forEach(o=>o.classList.toggle('sel',o.getAttribute('data-skin')===skin)); }
+document.getElementById('btnLook').onclick=()=>{ const cd=document.getElementById('cfgDark'); if(cd) cd.checked=document.documentElement.getAttribute('data-theme')==='dark'; applySkin(document.documentElement.getAttribute('data-skin')||'papel'); show('lookScrim'); };
+document.getElementById('lookClose').onclick=()=>hide('lookScrim');
+document.querySelectorAll('#lookScrim .themeopt').forEach(o=>{ o.onclick=()=>applySkin(o.getAttribute('data-skin')); });
 document.getElementById('openRestore').onclick=openRestore;
 document.getElementById('restoreClose').onclick=()=>hide('restoreScrim');
 document.getElementById('acctPass').onclick=acctChangePass;
