@@ -58,7 +58,7 @@ h2{margin:0;font-weight:600}
 .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:11px 12px}
 .card .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;font-weight:600}
 .card .v{font-size:18px;font-weight:700;margin-top:3px}
-.card.cobr .v{color:var(--c-collected)}.card.aco .v{color:var(--brand)}.card.sinp .v{color:var(--c-unpaid)}
+.card.cobr .v{color:var(--c-tocollect)}.card.aco .v{color:var(--c-collected)}.card.sinp .v{color:var(--c-unpaid)}
 .pulse{margin:10px 0 4px}
 .pulse .bar{height:8px;border-radius:99px;background:var(--line2);overflow:hidden;display:flex}
 .pulse .bar i{display:block;height:100%}
@@ -195,9 +195,9 @@ html[data-theme="dark"] .sheet.setpanel{background:var(--bg)}
 .setgroup{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px 14px;margin:0 2px 12px;box-shadow:var(--shadow)}
 #setScrim .setsec{cursor:pointer;user-select:none}
 #setScrim .setsec::after{content:"";width:7px;height:7px;border-right:2px solid var(--brand);border-bottom:2px solid var(--brand);transform:rotate(45deg);margin-left:auto;opacity:.6;transition:transform .18s}
-#setScrim .setsec.open::after{transform:rotate(-135deg)}
-#setScrim .setsec + .setgroup{display:none}
-#setScrim .setsec.open + .setgroup{display:block}
+#setScrim .setsec.closed::after{transform:rotate(-45deg)}
+#setScrim .setsec + .setgroup{display:block}
+#setScrim .setsec.closed + .setgroup{display:none}
 .acctcard{background:var(--brand-soft);border-radius:12px;padding:12px 14px;margin:2px 0 6px}
 .acctcard .em{font-weight:700;color:var(--ink);font-size:15px;word-break:break-word}
 .acctcard .pl{font-size:12.5px;font-weight:700;color:var(--brand);margin-top:3px}
@@ -413,13 +413,6 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   </div>
   <input type="file" id="logoFile" accept="image/*" style="display:none">
 
-  <div class="setsec">Copias de seguridad</div>
-  <div class="setgroup">
-  <div class="setrow"><span>Copia automática (nube)</span><button class="link" id="openRestore">Restaurar…</button></div>
-  <div class="setrow"><span>Backup manual</span><span><button class="link" id="exportData">Exportar</button> · <button class="link" id="importData">Importar</button></span></div>
-  </div>
-  <input type="file" id="importFile" accept="application/json,.json" style="display:none">
-
   <div class="setsec">Google Calendar</div>
   <div class="setgroup">
   <div class="setrow"><span id="gcalState" style="color:var(--muted);font-size:14px">—</span><span><button class="link" id="gcalConnect">Conectar</button><button class="link" id="gcalSync" style="display:none">Sincronizar</button> <button class="link danger" id="gcalDisconnect" style="display:none">Desconectar</button></span></div>
@@ -432,6 +425,13 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   <div class="hint" style="margin:2px 2px 4px">Suma el estado “Liquidado” y el cierre por período. Útil si rendís lo cobrado a un equipo.</div>
   <div class="setrow" id="rowLiq"><span>Ver informe</span><button class="link" id="openLiq">Ver</button></div>
   </div>
+
+  <div class="setsec">Copias de seguridad</div>
+  <div class="setgroup">
+  <div class="setrow"><span>Copia automática (nube)</span><button class="link" id="openRestore">Restaurar…</button></div>
+  <div class="setrow"><span>Backup manual</span><span><button class="link" id="exportData">Exportar</button> · <button class="link" id="importData">Importar</button></span></div>
+  </div>
+  <input type="file" id="importFile" accept="application/json,.json" style="display:none">
 
   <div class="setsec">Avanzado</div>
   <div class="setgroup">
@@ -1406,7 +1406,7 @@ function applySkin(skin){ skin=skin||'papel'; document.documentElement.setAttrib
 document.getElementById('btnLook').onclick=()=>{ const cd=document.getElementById('cfgDark'); if(cd) cd.checked=document.documentElement.getAttribute('data-theme')==='dark'; applySkin(document.documentElement.getAttribute('data-skin')||'papel'); show('lookScrim'); };
 document.getElementById('lookClose').onclick=()=>hide('lookScrim');
 document.querySelectorAll('#lookScrim .themeopt').forEach(o=>{ o.onclick=()=>applySkin(o.getAttribute('data-skin')); });
-document.querySelectorAll('#setScrim .setsec').forEach(s=>{ s.onclick=()=>s.classList.toggle('open'); });
+document.querySelectorAll('#setScrim .setsec').forEach(s=>{ s.onclick=()=>s.classList.toggle('closed'); });
 document.getElementById('openRestore').onclick=openRestore;
 document.getElementById('restoreClose').onclick=()=>hide('restoreScrim');
 document.getElementById('acctPass').onclick=acctChangePass;
