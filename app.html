@@ -18,9 +18,9 @@
   --bg:#F6F3EC;--surface:#FFFFFF;--ink:#23211D;--muted:#8C867A;--faint:#B6B0A4;
   --line:#E7E1D5;--line2:#F0EBE0;--brand:#2F6F62;--brand-soft:#E4EFEB;
   --c-prog:#2A2A28;--cs-prog:#EAE8E3;
-  --c-unpaid:#3F86CF;--cs-unpaid:#E7EFFA;
-  --c-tocollect:#DA4F39;--cs-tocollect:#FBEAE5;
-  --c-collected:#3F9E5C;--cs-collected:#E7F3EB;
+  --c-unpaid:#DA4F39;--cs-unpaid:#FBEAE5;
+  --c-tocollect:#3F9E5C;--cs-tocollect:#E7F3EB;
+  --c-collected:#3F86CF;--cs-collected:#E7EFFA;
   --c-mp:#D9569A;--cs-mp:#FBE7F1;
   --shadow:0 1px 2px rgba(40,35,25,.04),0 6px 20px rgba(40,35,25,.06);--radius:14px;
 }
@@ -28,8 +28,8 @@
 html,body{margin:0;padding:0;background:var(--bg)}
 html{color-scheme:light;min-height:100%}
 html[data-theme="dark"]{color-scheme:dark}
-html[data-skin="nieve"]{--bg:#F3F6F8;--surface:#FFFFFF;--ink:#1F2933;--muted:#6B7580;--faint:#A3ABB4;--line:#E4E9ED;--line2:#F1F4F6;--brand:#2E6E8E;--brand-soft:#E2EEF3;--c-prog:#3A4450;--cs-prog:#EAEDF0;--c-unpaid:#3F86CF;--cs-unpaid:#E6EFFA;--c-tocollect:#CF5138;--cs-tocollect:#FAE6E0;--c-collected:#2F9E77;--cs-collected:#E1F2EC}
-html[data-skin="arena"]{--bg:#F1E7D8;--surface:#FBF6EE;--ink:#3A2E24;--muted:#8A7358;--faint:#B8A88F;--line:#E4D6C2;--line2:#EFE6D6;--brand:#B4664A;--brand-soft:#F3E3D3;--c-prog:#5A4B3A;--cs-prog:#EBE1D0;--c-unpaid:#3F6E86;--cs-unpaid:#E4E8E1;--c-tocollect:#B4512F;--cs-tocollect:#F3DFCE;--c-collected:#5E7A3E;--cs-collected:#E8E9D2;--c-mp:#B05A86;--cs-mp:#F1DCE4}
+html[data-skin="nieve"]{--bg:#F3F6F8;--surface:#FFFFFF;--ink:#1F2933;--muted:#6B7580;--faint:#A3ABB4;--line:#E4E9ED;--line2:#F1F4F6;--brand:#2E6E8E;--brand-soft:#E2EEF3;--c-prog:#3A4450;--cs-prog:#EAEDF0;--c-unpaid:#CF5138;--cs-unpaid:#FAE6E0;--c-tocollect:#2F9E77;--cs-tocollect:#E1F2EC;--c-collected:#3F86CF;--cs-collected:#E6EFFA}
+html[data-skin="arena"]{--bg:#F1E7D8;--surface:#FBF6EE;--ink:#3A2E24;--muted:#8A7358;--faint:#B8A88F;--line:#E4D6C2;--line2:#EFE6D6;--brand:#B4664A;--brand-soft:#F3E3D3;--c-prog:#5A4B3A;--cs-prog:#EBE1D0;--c-unpaid:#B4512F;--cs-unpaid:#F3DFCE;--c-tocollect:#5E7A3E;--cs-tocollect:#E8E9D2;--c-collected:#4E6E88;--cs-collected:#E3E8EC;--c-mp:#B05A86;--cs-mp:#F1DCE4}
 
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum' 1;padding-bottom:90px}
 .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
@@ -193,6 +193,11 @@ h2{margin:0;font-weight:600}
 .sheet.setpanel{background:var(--bg)}
 html[data-theme="dark"] .sheet.setpanel{background:var(--bg)}
 .setgroup{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px 14px;margin:0 2px 12px;box-shadow:var(--shadow)}
+#setScrim .setsec{cursor:pointer;user-select:none}
+#setScrim .setsec::after{content:"";width:7px;height:7px;border-right:2px solid var(--brand);border-bottom:2px solid var(--brand);transform:rotate(45deg);margin-left:auto;opacity:.6;transition:transform .18s}
+#setScrim .setsec.open::after{transform:rotate(-135deg)}
+#setScrim .setsec + .setgroup{display:none}
+#setScrim .setsec.open + .setgroup{display:block}
 .acctcard{background:var(--brand-soft);border-radius:12px;padding:12px 14px;margin:2px 0 6px}
 .acctcard .em{font-weight:700;color:var(--ink);font-size:15px;word-break:break-word}
 .acctcard .pl{font-size:12.5px;font-weight:700;color:var(--brand);margin-top:3px}
@@ -247,9 +252,9 @@ html[data-theme="dark"]{
   --bg:#17161A;--surface:#211F26;--ink:#EDEAF2;--muted:#9C97A6;--faint:#6A6577;
   --line:#312E39;--line2:#282631;--brand:#6FC0AE;--brand-soft:#22322E;
   --c-prog:#C9C4D4;--cs-prog:#2A2833;
-  --c-unpaid:#6BA8E8;--cs-unpaid:#1C2A3B;
-  --c-tocollect:#E87C68;--cs-tocollect:#3A2320;
-  --c-collected:#63BE84;--cs-collected:#1E3226;
+  --c-unpaid:#E87C68;--cs-unpaid:#3A2320;
+  --c-tocollect:#63BE84;--cs-tocollect:#1E3226;
+  --c-collected:#6BA8E8;--cs-collected:#1C2A3B;
   --c-mp:#E27BB4;--cs-mp:#331F2B;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.45);
 }
@@ -429,7 +434,9 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   </div>
 
   <div class="setsec">Avanzado</div>
+  <div class="setgroup">
   <div class="advrow"><button class="btn btn-dangero" id="resetData">Reiniciar datos</button><button class="btn btn-dangero" id="acctDelete">Eliminar mi cuenta</button></div>
+  </div>
 
   <span id="storageMode" style="display:none"></span><span id="storageHint" style="display:none"></span>
   <div class="actions" style="margin-top:16px"><button class="btn btn-primary" id="setClose">Aceptar</button></div>
@@ -1399,6 +1406,7 @@ function applySkin(skin){ skin=skin||'papel'; document.documentElement.setAttrib
 document.getElementById('btnLook').onclick=()=>{ const cd=document.getElementById('cfgDark'); if(cd) cd.checked=document.documentElement.getAttribute('data-theme')==='dark'; applySkin(document.documentElement.getAttribute('data-skin')||'papel'); show('lookScrim'); };
 document.getElementById('lookClose').onclick=()=>hide('lookScrim');
 document.querySelectorAll('#lookScrim .themeopt').forEach(o=>{ o.onclick=()=>applySkin(o.getAttribute('data-skin')); });
+document.querySelectorAll('#setScrim .setsec').forEach(s=>{ s.onclick=()=>s.classList.toggle('open'); });
 document.getElementById('openRestore').onclick=openRestore;
 document.getElementById('restoreClose').onclick=()=>hide('restoreScrim');
 document.getElementById('acctPass').onclick=acctChangePass;
