@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- Meta Pixel (Consultorio App) - solo evento de registro, sin PageView -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','339784632165339');
+</script>
+<!-- End Meta Pixel -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="color-scheme" content="light">
 <meta name="apple-mobile-web-app-title" content="Consultorio">
@@ -1375,7 +1381,7 @@ function fbAuth(create){
   const em=document.getElementById('fbEmail').value.trim(), pw=document.getElementById('fbPass').value;
   const errEl=document.getElementById('fbErr'); errEl.style.display='none';
   const p=create?cloud.auth.createUserWithEmailAndPassword(em,pw):cloud.auth.signInWithEmailAndPassword(em,pw);
-  p.then(()=>{ document.getElementById('fbPass').value=''; hide('syncScrim'); }).catch(e=>{ errEl.textContent=fbErrMsg(e); errEl.style.display='block'; });
+  p.then(()=>{ document.getElementById('fbPass').value=''; hide('syncScrim'); if(create&&window.fbq){try{fbq('track','CompleteRegistration');fbq('track','StartTrial',{value:4.00,currency:'USD',predicted_ltv:48.00});}catch(e){}} }).catch(e=>{ errEl.textContent=fbErrMsg(e); errEl.style.display='block'; });
 }
 document.getElementById('btnPat').onclick=()=>switchView('pat');
 document.getElementById('btnSync').onclick=()=>{ if(cloud.user){ fillAccountInfo(); show('setScrim'); } else openSyncSheet(); };

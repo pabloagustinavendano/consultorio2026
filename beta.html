@@ -1378,7 +1378,7 @@ function fbAuth(create){
   const em=document.getElementById('fbEmail').value.trim(), pw=document.getElementById('fbPass').value;
   const errEl=document.getElementById('fbErr'); errEl.style.display='none';
   const p=create?cloud.auth.createUserWithEmailAndPassword(em,pw):cloud.auth.signInWithEmailAndPassword(em,pw);
-  p.then(()=>{ document.getElementById('fbPass').value=''; hide('syncScrim'); }).catch(e=>{ errEl.textContent=fbErrMsg(e); errEl.style.display='block'; });
+  p.then(()=>{ document.getElementById('fbPass').value=''; hide('syncScrim'); if(create&&window.fbq){try{fbq('track','CompleteRegistration');fbq('track','StartTrial',{value:4.00,currency:'USD',predicted_ltv:48.00});}catch(e){}} }).catch(e=>{ errEl.textContent=fbErrMsg(e); errEl.style.display='block'; });
 }
 document.getElementById('btnPat').onclick=()=>switchView('pat');
 document.getElementById('btnSync').onclick=()=>{ if(cloud.user){ fillAccountInfo(); show('setScrim'); } else openSyncSheet(); };

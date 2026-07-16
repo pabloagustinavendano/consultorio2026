@@ -3,284 +3,454 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Consultorio · Turnos y cobros, sin salir de Google Calendar</title>
-<meta name="description" content="Agenda tus turnos, registrá quién te pagó y armá el informe del mes. Para psicólogos y terapeutas de Latinoamérica. 7 días gratis, sin tarjeta.">
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','339784632165339');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=339784632165339&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
+<title>Consultorio App · La agenda y los cobros de tu consulta, en un solo lugar</title>
+<meta name="description" content="Agenda turnos, registra quién te pagó y cierra el mes en 2 minutos. Con o sin Google Calendar. Para profesionales de la salud mental. 7 días gratis, sin tarjeta.">
+<meta property="og:title" content="Consultorio App · Turnos y cobros para tu consulta">
+<meta property="og:description" content="Ordena la agenda y el dinero de tu consulta. 7 días gratis, sin tarjeta.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --brand:#2F6F62;
-    --brand-deep:#1f4d43;
-    --brand-soft:#e6efec;
-    --bg:#f6f3ec;
-    --paper:#fffdf8;
-    --ink:#22201d;
-    --muted:#6f6a62;
-    --line:#e2ddd3;
-    /* estados reales de la app */
-    --st-prog:#3a3a3a;
-    --st-unpaid:#35618f;
-    --st-paid:#b0503d;
-    --st-liq:#2f6f4a;
+    --brand:#2F6F62; --brand-deep:#1f4d43; --brand-soft:#e6efec; --brand-glow:#3f8a79;
+    --bg:#f6f3ec; --paper:#fffdf8; --ink:#22201d; --muted:#6f6a62; --line:#e2ddd3;
+    --st-prog:#3a3a3a; --st-unpaid:#c0392b; --st-paid:#2f8f5b;
+    --shadow:0 18px 44px -26px rgba(31,77,67,.45);
+    --radius:16px;
   }
+  /* ===== temas globales (cambian toda la web) ===== */
+  body.t-nieve{--brand:#2E6E8E;--brand-deep:#1d4c63;--brand-soft:#e2eef3;--brand-glow:#3f8ab0;--bg:#f3f6f8;--paper:#ffffff;--ink:#1f2933;--muted:#6b7580;--line:#e4e9ed}
+  body.t-arena{--brand:#B4664A;--brand-deep:#7a4227;--brand-soft:#f3e3d3;--brand-glow:#c67e5f;--bg:#f1e7d8;--paper:#fbf6ee;--ink:#3a2e24;--muted:#8a7358;--line:#e4d6c2}
+  body.t-dark{--brand:#6FC0AE;--brand-deep:#22322e;--brand-soft:#22322e;--brand-glow:#6fc0ae;--bg:#17161a;--paper:#211f26;--ink:#edeaf2;--muted:#9c97a6;--line:#312e39}
+
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
-  body{
-    margin:0;background:var(--bg);color:var(--ink);
-    font:400 17px/1.6 'Karla',system-ui,sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:940px;margin:0 auto;padding:0 22px}
+  body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 'Karla',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .35s ease,color .35s ease}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+  a{color:var(--brand)}
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+  /* utilidades de estado */
+  .st-prog{--st:var(--st-prog)} .st-unpaid{--st:var(--st-unpaid)} .st-paid{--st:var(--st-paid)}
 
-  /* ---------- nav ---------- */
-  nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
-  .logo{font-family:'Fraunces',serif;font-weight:700;font-size:21px;letter-spacing:-.01em}
+  /* nav */
+  .nav-outer{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:border-color .2s,box-shadow .2s,background .35s}
+  .nav-outer.scrolled{border-color:var(--line);box-shadow:0 6px 20px -18px rgba(0,0,0,.5)}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:13px 0}
+  .logo{font-family:'Fraunces',serif;font-weight:700;font-size:20px;letter-spacing:-.01em;color:var(--ink);text-decoration:none}
   .logo span{color:var(--brand)}
-  .navlinks{display:flex;gap:22px;align-items:center;font-size:15px}
-  .navlinks a{color:var(--muted);text-decoration:none}
-  .navlinks a:hover{color:var(--brand)}
-  .btn{
-    display:inline-block;background:var(--brand);color:#fff;text-decoration:none;
-    padding:12px 22px;border-radius:999px;font-weight:700;font-size:16px;
-    transition:background .15s ease,transform .15s ease;border:none;cursor:pointer;font-family:inherit;
-  }
-  .btn:hover{background:var(--brand-deep)}
+  .navlinks{display:flex;gap:16px;align-items:center;font-size:15px}
+  .navlinks a:not(.btn){color:var(--muted);text-decoration:none}
+  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;background:var(--brand);color:#fff;text-decoration:none;padding:13px 22px;border-radius:999px;font-weight:700;font-size:16px;transition:background .15s,transform .15s;border:none;cursor:pointer;font-family:inherit;box-shadow:0 10px 22px -12px rgba(47,111,98,.6)}
+  .btn:hover{background:var(--brand-deep);transform:translateY(-1px)}
   .btn:focus-visible,a:focus-visible,button:focus-visible{outline:2.5px solid var(--brand);outline-offset:3px}
-  .btn-sm{padding:9px 18px;font-size:15px}
-  .btn-ghost{background:transparent;color:var(--brand);border:1.5px solid var(--brand)}
-  .btn-ghost:hover{background:var(--brand-soft)}
+  .btn-sm{padding:9px 17px;font-size:14.5px;box-shadow:none}
+  .btn-ghost{background:transparent;color:var(--brand);border:1.5px solid var(--brand);box-shadow:none}
 
-  /* ---------- hero ---------- */
-  header.hero{padding:52px 0 24px;text-align:center}
-  h1{
-    font-family:'Fraunces',serif;font-weight:600;
-    font-size:clamp(34px,5.4vw,58px);line-height:1.06;letter-spacing:-.02em;
-    margin:0 auto 18px;max-width:16ch;
-  }
+  /* hero */
+  .hero-bg{position:relative}
+  .hero-bg::before{content:"";position:absolute;inset:0;background:radial-gradient(560px 300px at 50% -30px,color-mix(in srgb,var(--brand) 16%,transparent),transparent 70%);pointer-events:none}
+  header.hero{padding:44px 0 8px;text-align:center;position:relative}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(33px,8vw,60px);line-height:1.05;letter-spacing:-.022em;margin:0 auto 16px;max-width:15ch}
   h1 em{font-style:normal;color:var(--brand)}
-  .lede{font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:52ch;margin:0 auto 28px}
-  .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
-  .microcopy{font-size:14px;color:var(--muted);margin-top:14px}
+  .lede{font-size:clamp(16.5px,4.4vw,21px);color:var(--muted);max-width:54ch;margin:0 auto 26px}
+  .cta-row{display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+  .cta-row .btn{flex:1 1 auto;min-width:210px;max-width:320px}
+  .microcopy{font-size:13.5px;color:var(--muted);display:flex;gap:8px 16px;justify-content:center;flex-wrap:wrap}
+  .microcopy span{display:inline-flex;align-items:center;gap:6px}
+  .microcopy svg{width:15px;height:15px;color:var(--brand)}
 
-  /* ---------- demo (signature) ---------- */
-  .demo{margin:44px auto 0;max-width:560px}
-  .demo-frame{
-    background:var(--paper);border:1px solid var(--line);border-radius:18px;
-    padding:18px 18px 14px;box-shadow:0 14px 34px -22px rgba(31,77,67,.5);
-  }
-  .demo-day{
-    display:flex;align-items:baseline;gap:9px;
-    font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin:0 4px 12px;
-  }
-  .demo-day small{font-family:'Karla',sans-serif;font-weight:400;font-size:13px;color:var(--muted)}
-  .srow{
-    display:flex;align-items:center;gap:14px;width:100%;text-align:left;
-    background:#fff;border:1px solid var(--line);border-left:5px solid var(--st);
-    border-radius:12px;padding:13px 15px;margin-bottom:9px;cursor:pointer;
-    font:inherit;color:inherit;transition:transform .12s ease,box-shadow .12s ease;
-  }
+  /* ===== app mockup ===== */
+  .appwrap{margin:34px auto 0;max-width:390px}
+  .themepills{display:flex;gap:6px;justify-content:center;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+  .tp{border:1px solid var(--line);background:var(--paper);color:var(--muted);border-radius:999px;padding:6px 13px;font:600 12.5px 'Karla',sans-serif;cursor:pointer;transition:.15s}
+  .tp:hover{border-color:var(--brand)}
+  .tp.on{border-color:var(--brand);color:var(--brand);background:var(--brand-soft)}
+  .themehint{text-align:center;font-size:12px;color:var(--muted);margin:0 0 14px}
+
+  .phone{background:var(--bg);border:1px solid var(--line);border-radius:28px;padding:12px;box-shadow:var(--shadow);color:var(--ink);transition:background .35s,border-color .35s,color .35s;overflow:hidden}
+  .ph-top{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 12px}
+  .ph-brand{font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:var(--ink)}
+  .ph-icons{display:flex;gap:6px}
+  .ph-icons b{width:26px;height:26px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:400}
+  .ph-balance{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;padding:0 2px 12px}
+  .bcell{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:9px 10px}
+  .bcell small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+  .bcell b{font-family:'Fraunces',serif;font-size:16.5px;font-weight:600;line-height:1}
+  .bcell.paid b{color:var(--st-paid)} .bcell.due b{color:var(--st-unpaid)}
+  .ph-tabs{display:flex;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:3px;margin:0 2px 12px}
+  .pt2{flex:1;border:none;background:transparent;color:var(--muted);font:700 14px 'Karla',sans-serif;padding:8px 0;border-radius:9px;cursor:pointer;transition:.15s}
+  .pt2.on{background:var(--brand);color:#fff}
+  .ph-view{padding:0 2px}
+  .ph-view[hidden]{display:none}
+  .ph-day{display:flex;align-items:baseline;gap:8px;font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin:0 2px 10px;color:var(--ink)}
+  .ph-day small{font-family:'Karla',sans-serif;font-weight:400;font-size:12.5px;color:var(--muted)}
+  .srow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--st,var(--st-prog));border-radius:12px;padding:12px 13px;margin-bottom:8px;cursor:pointer;font:inherit;color:var(--ink);transition:transform .12s,box-shadow .12s,background .35s,border-color .35s}
+  .srow[data-state="prog"]{--st:var(--st-prog)} .srow[data-state="unpaid"]{--st:var(--st-unpaid)} .srow[data-state="paid"]{--st:var(--st-paid)}
   .srow:hover{transform:translateY(-1px);box-shadow:0 6px 16px -10px rgba(0,0,0,.35)}
-  .srow:active{transform:translateY(0)}
-  .stime{font-weight:700;font-size:15px;width:44px;flex:none;color:var(--muted)}
-  .sname{flex:1;font-weight:500}
-  .sprice{display:block;font-size:13px;color:var(--muted);font-weight:400}
-  .spill{
-    font-size:13px;font-weight:700;padding:5px 13px;border-radius:999px;flex:none;
-    color:var(--st);background:color-mix(in srgb,var(--st) 11%,#fff);
-  }
-  .demo-hint{
-    text-align:center;font-size:13.5px;color:var(--muted);margin:12px 0 2px;
-  }
-  .demo-hint b{color:var(--brand);font-weight:700}
+  .stime{font-weight:700;font-size:14px;width:42px;flex:none;color:var(--muted)}
+  .sname{flex:1;font-weight:500;font-size:15px}
+  .sprice{display:block;font-size:12.5px;color:var(--muted);font-weight:400}
+  .spill{font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;flex:none;color:var(--st);background:color-mix(in srgb,var(--st) 16%,var(--paper));transition:.2s}
+  .taphint{text-align:center;font-size:12px;color:var(--muted);margin:6px 0 2px}
+  .taphint b{color:var(--brand)}
+  .wkday{margin-bottom:10px}
+  .wkday .wl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:0 2px 5px}
+  .wchip{display:flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--st);border-radius:9px;padding:8px 11px;margin-bottom:5px;font-size:13.5px;color:var(--ink);cursor:pointer;transition:transform .1s,box-shadow .12s}
+  .wchip:hover{transform:translateY(-1px);box-shadow:0 5px 14px -10px rgba(0,0,0,.35)}
+  .wchip .wt{font-weight:700;color:var(--muted);font-size:12.5px}
+  .wchip .wn{flex:1}
+  .wchip .wp{font-size:11px;font-weight:700;color:var(--st)}
+  .mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+  .mdow{font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--muted);text-align:center;padding-bottom:2px}
+  .mcell{background:var(--paper);border:1px solid var(--line);border-radius:9px;min-height:52px;padding:5px 4px 4px;text-align:center}
+  .mcell.empty{background:transparent;border:none}
+  .mcell.today{border-color:var(--brand);box-shadow:0 0 0 2px color-mix(in srgb,var(--brand) 22%,transparent)}
+  .mnum{font-size:12px;font-weight:700;color:var(--muted)}
+  .mcell.today .mnum{color:#fff;background:var(--brand);border-radius:50%;width:20px;height:20px;line-height:20px;margin:0 auto 3px}
+  .mdots{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-top:4px}
+  .mdot{width:6px;height:6px;border-radius:50%;background:var(--st)}
 
-  /* ---------- secciones ---------- */
-  section{padding:64px 0}
-  .eyebrow{
-    font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
-    color:var(--brand);margin-bottom:10px;
-  }
-  h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(26px,3.4vw,36px);line-height:1.18;letter-spacing:-.015em;margin:0 0 14px}
+  /* trust bar */
+  .trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--paper);margin-top:42px;transition:background .35s}
+  .trust-row{display:flex;flex-wrap:wrap;gap:10px 26px;justify-content:center;padding:18px 0;font-size:14px;color:var(--muted);font-weight:500}
+  .trust-row span{display:inline-flex;align-items:center;gap:8px}
+  .trust-row svg{width:17px;height:17px;color:var(--brand);flex:none}
+
+  /* sections */
+  section{padding:56px 0}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);margin-bottom:10px}
+  h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(26px,6vw,38px);line-height:1.14;letter-spacing:-.018em;margin:0 0 14px}
   h3{font-family:'Fraunces',serif;font-weight:600;font-size:20px;margin:0 0 6px}
   p{margin:0 0 14px}
-  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:30px;margin-top:36px}
-  .col p{color:var(--muted);font-size:16px;margin:0}
+  .center{text-align:center}
+  .sub{color:var(--muted);max-width:58ch}
+  .center .sub{margin-left:auto;margin-right:auto}
   .rule{height:1px;background:var(--line);border:0;margin:0}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:34px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px;transition:transform .18s,box-shadow .18s,border-color .18s,background .35s}
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--brand) 35%,var(--line))}
+  .ico{width:44px;height:44px;border-radius:12px;background:var(--brand-soft);display:grid;place-items:center;margin-bottom:14px}
+  .ico svg{width:23px;height:23px;color:var(--brand)}
+  .card p{color:var(--muted);font-size:15.5px;margin:0}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:24px;margin-top:38px;counter-reset:step}
+  .step .num{counter-increment:step;font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:#fff;background:var(--brand);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;margin-bottom:12px}
+  .step .num::before{content:counter(step)}
+  .step p{color:var(--muted);font-size:15.5px;margin:0}
 
-  /* calendar block */
-  .cal{background:var(--brand-deep);color:#fff;border-radius:22px;padding:44px 36px;margin:8px 0}
-  .cal .eyebrow{color:#9ccbbe}
-  .cal h2{color:#fff}
-  .cal p{color:#cfe0da;max-width:56ch}
-  .cal ul{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:12px}
-  .cal li{padding-left:26px;position:relative;color:#e6efec;font-size:16px}
-  .cal li::before{content:"→";position:absolute;left:0;color:#9ccbbe;font-weight:700}
+  /* calendar-opcional (suave) */
+  .cal{background:var(--brand-soft);color:var(--ink);border:1px solid color-mix(in srgb,var(--brand) 24%,var(--line));border-radius:24px;padding:42px 30px;margin:8px 0;box-shadow:0 14px 34px -28px rgba(31,77,67,.4);transition:background .35s,border-color .35s}
+  .cal .eyebrow{color:var(--brand)}
+  .cal h2{color:var(--ink)}
+  .cal p{color:var(--muted);max-width:58ch}
+  .cal ul{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:12px;max-width:62ch}
+  .cal li{padding-left:26px;position:relative;color:var(--ink);font-size:15.5px}
+  .cal li::before{content:"→";position:absolute;left:0;color:var(--brand);font-weight:700}
+  .cal .optnote{margin:24px 0 0;padding:16px 18px;background:color-mix(in srgb,var(--brand) 10%,var(--paper));border:1px solid color-mix(in srgb,var(--brand) 18%,var(--line));border-radius:14px;color:var(--ink);font-size:15px}
+  .cal .optnote b{color:var(--brand)}
 
-  /* precio */
-  .price-card{
-    background:var(--paper);border:1px solid var(--line);border-radius:20px;
-    padding:34px;text-align:center;max-width:440px;margin:32px auto 0;
-  }
-  .price{font-family:'Fraunces',serif;font-size:46px;font-weight:600;line-height:1;color:var(--brand)}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px}
+  .comp{border-radius:var(--radius);padding:24px 22px;border:1px solid var(--line);text-align:left;background:var(--paper)}
+  .comp.good{background:var(--brand-soft);border-color:color-mix(in srgb,var(--brand) 30%,var(--line))}
+  .comp ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  .comp li{padding-left:26px;position:relative;font-size:15px;color:var(--muted)}
+  .comp.good li{color:var(--ink)}
+  .comp li b{position:absolute;left:0;font-weight:700}
+  .comp.bad li b{color:#c0503d} .comp.good li b{color:var(--brand)}
+
+  .price-card{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:36px 28px;text-align:center;max-width:440px;margin:34px auto 0;box-shadow:var(--shadow);position:relative;transition:background .35s}
+  .price-tag{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--brand);color:#fff;font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 16px;border-radius:999px;text-transform:uppercase}
+  .price{font-family:'Fraunces',serif;font-size:50px;font-weight:600;line-height:1;color:var(--brand);margin-top:6px}
   .price small{font-family:'Karla',sans-serif;font-size:16px;font-weight:400;color:var(--muted)}
-  .price-alt{font-size:15px;color:var(--muted);margin:8px 0 22px}
-  .price-list{list-style:none;padding:0;margin:0 0 26px;text-align:left;display:grid;gap:9px}
-  .price-list li{padding-left:24px;position:relative;font-size:16px}
+  .price-alt{font-size:15px;color:var(--muted);margin:8px 0 6px}
+  .price-coffee{font-size:14px;color:var(--brand-deep);font-weight:600;margin:0 0 22px}
+  .price-list{list-style:none;padding:0;margin:0 0 24px;text-align:left;display:grid;gap:10px}
+  .price-list li{padding-left:26px;position:relative;font-size:16px}
   .price-list li::before{content:"✓";position:absolute;left:0;color:var(--brand);font-weight:700}
 
-  /* faq */
-  details{border-bottom:1px solid var(--line);padding:16px 0}
-  summary{cursor:pointer;font-weight:700;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+  details{border-bottom:1px solid var(--line);padding:17px 0}
+  summary{cursor:pointer;font-weight:700;font-size:16.5px;list-style:none;display:flex;justify-content:space-between;gap:14px;color:var(--ink)}
   summary::-webkit-details-marker{display:none}
-  summary::after{content:"+";color:var(--brand);font-weight:700;font-size:21px;line-height:1}
+  summary::after{content:"+";color:var(--brand);font-weight:700;font-size:22px;line-height:1}
   details[open] summary::after{content:"–"}
-  details p{margin:12px 0 0;color:var(--muted);font-size:16px;max-width:64ch}
+  details p{margin:11px 0 0;color:var(--muted);font-size:15.5px;max-width:66ch}
 
-  /* footer */
-  footer{background:var(--paper);border-top:1px solid var(--line);padding:44px 0 34px;margin-top:20px}
-  .foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
-  .foot a{color:var(--muted);text-decoration:none;font-size:15px;margin-right:20px}
+  .founder{display:flex;gap:18px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;max-width:720px;margin:0 auto;transition:background .35s}
+  .founder .av{width:50px;height:50px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-family:'Fraunces',serif;font-weight:700;font-size:19px;flex:none}
+  .founder p{font-size:16px;color:var(--ink);margin:0 0 8px}
+  .founder .sig{font-size:14px;color:var(--muted)}
+  .final{background:var(--brand);border-radius:24px;padding:48px 30px;text-align:center;color:#fff;margin:8px 0;box-shadow:var(--shadow);transition:background .35s}
+  .final h2{color:#fff}
+  .final p{color:rgba(255,255,255,.86);max-width:46ch;margin:0 auto 24px}
+  .final .btn{background:#fff;color:var(--brand-deep)}
+  .final .microcopy{color:rgba(255,255,255,.8);margin-top:16px}
+  .final .microcopy svg{color:#fff}
+
+  footer{background:var(--paper);border-top:1px solid var(--line);padding:44px 0 34px;margin-top:20px;transition:background .35s}
+  .foot{display:flex;justify-content:space-between;gap:22px;flex-wrap:wrap}
+  .foot a{color:var(--muted);text-decoration:none;font-size:15px;display:block;margin-bottom:8px}
   .foot a:hover{color:var(--brand);text-decoration:underline}
-  .foot .small{font-size:13.5px;color:var(--muted)}
+  .foot .small{font-size:13.5px;color:var(--muted);max-width:34ch}
+  .foot h4{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);margin:0 0 12px}
 
-  @media(max-width:620px){
+  @media(max-width:640px){
     .navlinks a:not(.btn){display:none}
-    section{padding:48px 0}
-    .cal{padding:34px 24px}
+    .navlinks .btn-ghost{display:none}
+    section{padding:46px 0}
+    .cal{padding:34px 22px}
+    .final{padding:34px 22px}
+    .compare{grid-template-columns:1fr}
+    .founder{flex-direction:column;gap:12px}
   }
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <nav>
-    <div class="logo">Consultorio<span>.</span></div>
-    <div class="navlinks">
-      <a href="#como">Cómo funciona</a>
-      <a href="#precio">Precio</a>
-      <a class="btn btn-sm" href="/app.html">Entrar</a>
-    </div>
-  </nav>
-
-  <header class="hero">
-    <h1>Tus turnos y tus cobros, <em>en un solo lugar</em></h1>
-    <p class="lede">Consultorio ordena la agenda y el dinero de tu consulta, sin sacarte de Google Calendar. Pensado para psicólogos y terapeutas de Latinoamérica.</p>
-    <div class="cta-row">
-      <a class="btn" href="/app.html">Probar gratis 7 días</a>
-      <a class="btn btn-ghost" href="#como">Ver cómo funciona</a>
-    </div>
-    <p class="microcopy">Sin tarjeta. Cancelás cuando quieras.</p>
-
-    <!-- Signature: el gesto real de la app -->
-    <div class="demo">
-      <div class="demo-frame">
-        <div class="demo-day">Jueves <small>9 de julio</small></div>
-        <button class="srow" data-i="0" style="--st:var(--st-prog)">
-          <span class="stime">09:00</span>
-          <span class="sname">Ariana G.<span class="sprice">US$ 38</span></span>
-          <span class="spill">Agendado</span>
-        </button>
-        <button class="srow" data-i="1" style="--st:var(--st-unpaid)">
-          <span class="stime">15:00</span>
-          <span class="sname">Daniel R.<span class="sprice">$ 30.000</span></span>
-          <span class="spill">Sin pagar</span>
-        </button>
-        <button class="srow" data-i="2" style="--st:var(--st-paid)">
-          <span class="stime">18:00</span>
-          <span class="sname">Leo L.<span class="sprice">US$ 38</span></span>
-          <span class="spill">Pagado</span>
-        </button>
-        <p class="demo-hint">Tocá una sesión para <b>cambiar el estado del pago</b>. Así de rápido es.</p>
+<div class="nav-outer" id="navbar">
+  <div class="wrap">
+    <nav>
+      <a class="logo" href="/">Consultorio <span>App</span></a>
+      <div class="navlinks">
+        <a href="#como">Cómo funciona</a>
+        <a href="#precio">Precio</a>
+        <a class="btn btn-sm btn-ghost" href="/app.html">Entrar</a>
+        <a class="btn btn-sm" href="/app.html">Probar gratis</a>
       </div>
+    </nav>
+  </div>
+</div>
+
+<div class="hero-bg">
+  <div class="wrap">
+    <header class="hero">
+      <h1 class="reveal">Tu agenda y tus cobros, <em>en un solo lugar</em></h1>
+      <p class="lede reveal">Consultorio App ordena los turnos y el dinero de tu consulta. Registra quién te pagó de un toque, cierra el mes en dos minutos y —si quieres— conéctala con tu Google Calendar.</p>
+      <div class="cta-row reveal">
+        <a class="btn" href="/app.html">Probar gratis 7 días</a>
+      </div>
+      <div class="microcopy reveal">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Sin tarjeta</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Cancela cuando quieras</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Listo en 2 minutos</span>
+      </div>
+
+      <div class="appwrap reveal">
+        <div class="themepills">
+          <button class="tp on" data-t="">Papel</button>
+          <button class="tp" data-t="t-nieve">Nieve</button>
+          <button class="tp" data-t="t-arena">Arena</button>
+          <button class="tp" data-t="t-dark">Oscuro</button>
+        </div>
+        <p class="themehint">Elige un tema — cambia toda la web, como en la app</p>
+        <div class="phone" id="phone">
+          <div class="ph-top">
+            <span class="ph-brand">Consultorio App</span>
+            <span class="ph-icons"><b>👥</b><b>🎨</b><b>⚙</b></span>
+          </div>
+          <div class="ph-balance">
+            <div class="bcell"><small>Sesiones</small><b>24</b></div>
+            <div class="bcell paid"><small>Cobrado</small><b id="bPaid">US$ 456</b></div>
+            <div class="bcell due"><small>Sin pagar</small><b id="bDue">US$ 120</b></div>
+          </div>
+          <div class="ph-tabs">
+            <button class="pt2 on" data-v="dia">Día</button>
+            <button class="pt2" data-v="sem">Semana</button>
+            <button class="pt2" data-v="mes">Mes</button>
+          </div>
+
+          <div class="ph-view" data-view="dia">
+            <div class="ph-day" id="phDay">Hoy <small></small></div>
+            <button class="srow" data-i="0" data-state="prog" data-price="38">
+              <span class="stime">09:00</span>
+              <span class="sname">Ana P. 🇦🇷<span class="sprice">US$ 38</span></span>
+              <span class="spill">Agendado</span>
+            </button>
+            <button class="srow" data-i="1" data-state="unpaid" data-price="40">
+              <span class="stime">15:00</span>
+              <span class="sname">Bruno M. 🇺🇾<span class="sprice">US$ 40</span></span>
+              <span class="spill">Sin pagar</span>
+            </button>
+            <button class="srow" data-i="2" data-state="paid" data-price="38">
+              <span class="stime">18:00</span>
+              <span class="sname">Carla S. 🇨🇱<span class="sprice">US$ 38</span></span>
+              <span class="spill">Pagado</span>
+            </button>
+            <p class="taphint">Toca una sesión para <b>cambiar el estado del pago</b> y mira el balance.</p>
+          </div>
+
+          <div class="ph-view" data-view="sem" hidden><div id="phWeek"></div></div>
+          <div class="ph-view" data-view="mes" hidden>
+            <div class="ph-day" id="phMonth">Mes</div>
+            <div class="mgrid" id="phGrid"></div>
+          </div>
+        </div>
+        <p class="taphint" style="color:var(--muted)">Cambia de <b>vista</b>: Día · Semana · Mes</p>
+      </div>
+    </header>
+  </div>
+</div>
+
+<div class="trust">
+  <div class="wrap">
+    <div class="trust-row reveal">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Con o sin Google Calendar</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg> Copias de seguridad automáticas</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg> En el celular y en la computadora</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> 7 días gratis, sin tarjeta</span>
     </div>
-  </header>
+  </div>
 </div>
 
 <div class="wrap">
-  <section id="que">
-    <div class="eyebrow">Qué resuelve</div>
-    <h2>Dejá el Excel y los papelitos</h2>
-    <p style="color:var(--muted);max-width:58ch">Llevar la cuenta de quién vino, quién pagó y cuánto te deben termina en una planilla que nadie quiere abrir. Consultorio lo hace en tres toques.</p>
-
-    <div class="cols">
-      <div class="col">
+  <section id="que" class="center">
+    <div class="eyebrow reveal">El problema</div>
+    <h2 class="reveal">Deja el Excel y los papelitos</h2>
+    <p class="sub reveal">Llevar la cuenta de quién vino, quién pagó y cuánto te deben termina en una planilla que nadie quiere abrir —o peor, en la cabeza—. Consultorio App lo resuelve en tres toques, sin cambiar tu forma de trabajar.</p>
+    <div class="cards" style="text-align:left">
+      <div class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
         <h3>La agenda de siempre</h3>
-        <p>Mirá tu día, tu semana o tu mes. Arrastrá un turno para moverlo. Duplicá una sesión a la semana siguiente o a los quince días, si el paciente es quincenal.</p>
+        <p>Mira tu día, tu semana o tu mes. Arrastra un turno para moverlo. Duplica una sesión a la semana o cada quince días, si el paciente es quincenal.</p>
       </div>
-      <div class="col">
+      <div class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div>
         <h3>El cobro, al día</h3>
         <p>Cada sesión pasa de agendada a sin pagar y a pagada con un toque. Cada paciente puede tener su precio y su moneda: dólares, pesos o euros, sin mezclarse.</p>
       </div>
-      <div class="col">
+      <div class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></div>
         <h3>El informe del mes</h3>
-        <p>Elegís el mes y ves qué cobraste y quién te debe. Listo para imprimir o guardar en PDF. Los meses viejos siguen ahí, tal como los cerraste.</p>
+        <p>Eliges el mes y ves qué cobraste y quién te debe. Listo para guardar en PDF. Los meses viejos quedan ahí, tal como los cerraste.</p>
       </div>
     </div>
   </section>
 
   <hr class="rule">
 
-  <section id="como">
-    <div class="cal">
-      <div class="eyebrow">La diferencia</div>
-      <h2>No te saca de Google Calendar</h2>
-      <p>La mayoría de las apps de gestión te piden que abandones el calendario que ya usás. Consultorio hace lo contrario: se conecta con el tuyo y trabaja en un calendario propio, sin tocar el resto.</p>
-      <ul>
-        <li>Agendás un turno en la app y aparece en tu calendario.</li>
-        <li>Tu secretaria mueve un evento en el calendario y la app se entera.</li>
-        <li>Si borrás un turno, se borra en los dos lados.</li>
-        <li>La conexión es opcional y la cortás cuando quieras.</li>
-      </ul>
+  <section id="como" class="center">
+    <div class="eyebrow reveal">Cómo funciona</div>
+    <h2 class="reveal">Tres pasos y listo</h2>
+    <p class="sub reveal">No hay curva de aprendizaje. Si sabes usar un calendario, ya sabes usar Consultorio App.</p>
+    <div class="steps" style="text-align:left">
+      <div class="step reveal"><div class="num"></div><h3>Agenda el turno</h3><p>Cargas al paciente, el día y la hora. Si usas Google Calendar, aparece ahí también, automáticamente.</p></div>
+      <div class="step reveal"><div class="num"></div><h3>Marca el pago</h3><p>Cuando te pagan, un toque cambia el estado de la sesión. Nunca más "¿este me pagó o no?".</p></div>
+      <div class="step reveal"><div class="num"></div><h3>Cierra el mes</h3><p>El informe te dice cuánto cobraste y quién te debe, por moneda. En dos minutos, sin sumar a mano.</p></div>
     </div>
   </section>
 
-  <section id="precio">
-    <div class="eyebrow" style="text-align:center">Precio</div>
-    <h2 style="text-align:center">Uno solo, sin sorpresas</h2>
+  <section>
+    <div class="cal">
+      <div class="eyebrow reveal">Google Calendar, opcional</div>
+      <h2 class="reveal">Con Calendar o sin Calendar</h2>
+      <p class="reveal">Consultorio App funciona perfecto por su cuenta: no necesitas conectar nada para empezar a usarla. Y si ya vives en Google Calendar, la conectas y trabajan juntas —sin que la app toque el resto de tus eventos—.</p>
+      <ul>
+        <li class="reveal">Agendas un turno en la app y aparece en tu calendario, solo.</li>
+        <li class="reveal">Si mueves o creas algo en el calendario, la app lo trae con un toque.</li>
+        <li class="reveal">Trabaja en un calendario aparte: nunca toca tus eventos personales.</li>
+      </ul>
+      <div class="optnote reveal"><b>¿No usas Google Calendar?</b> No pasa nada: Consultorio App funciona igual de bien por su cuenta. La conexión es un extra, no un requisito.</div>
+    </div>
+  </section>
 
-    <div class="price-card">
+  <section class="center">
+    <div class="eyebrow reveal">El antes y el después</div>
+    <h2 class="reveal">Lo que cambia el primer día</h2>
+    <div class="compare">
+      <div class="comp bad reveal">
+        <h3>Con la planilla</h3>
+        <ul>
+          <li><b>✕</b>Buscas en tres lados quién te debe</li>
+          <li><b>✕</b>Copias fórmulas que se rompen</li>
+          <li><b>✕</b>Mezclas pesos, dólares y euros a ojo</li>
+          <li><b>✕</b>El cierre de mes te lleva una tarde</li>
+          <li><b>✕</b>Si pierdes el archivo, perdiste todo</li>
+        </ul>
+      </div>
+      <div class="comp good reveal">
+        <h3>Con Consultorio App</h3>
+        <ul>
+          <li><b>✓</b>Ves de un vistazo quién pagó y quién no</li>
+          <li><b>✓</b>Un toque cambia el estado del cobro</li>
+          <li><b>✓</b>Cada moneda se cuenta por separado</li>
+          <li><b>✓</b>El informe del mes sale en dos minutos</li>
+          <li><b>✓</b>Copias de seguridad automáticas en la nube</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section id="precio" class="center">
+    <div class="eyebrow reveal">Precio</div>
+    <h2 class="reveal">Uno solo, sin sorpresas</h2>
+    <p class="sub reveal">Sin planes confusos ni funciones bloqueadas. Todo incluido, un precio.</p>
+    <div class="price-card reveal">
+      <div class="price-tag">7 días gratis</div>
       <div class="price">US$ 4 <small>/ mes</small></div>
       <p class="price-alt">o $4.000 ARS por mes, si estás en Argentina</p>
+      <p class="price-coffee">Menos que un café por mes.</p>
       <ul class="price-list">
         <li>Pacientes y turnos sin límite</li>
-        <li>Sincronización con Google Calendar</li>
+        <li>Sincronización opcional con Google Calendar</li>
         <li>Informe mensual de cobros y deudas</li>
+        <li>Multi-moneda (US$, ARS, €) sin convertir</li>
+        <li>Temas y modo oscuro</li>
         <li>Copias de seguridad automáticas</li>
-        <li>Funciona en la computadora y en el celular</li>
+        <li>En la computadora y en el celular</li>
       </ul>
       <a class="btn" href="/app.html" style="width:100%">Empezar los 7 días gratis</a>
-      <p class="microcopy">No pedimos tarjeta para probar.</p>
+      <div class="microcopy" style="margin-top:14px;justify-content:center">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> No pedimos tarjeta para probar</span>
+      </div>
     </div>
   </section>
 
   <hr class="rule">
 
   <section id="faq">
-    <div class="eyebrow">Preguntas</div>
-    <h2>Antes de que preguntes</h2>
+    <div class="center">
+      <div class="eyebrow reveal">Preguntas</div>
+      <h2 class="reveal">Antes de que preguntes</h2>
+    </div>
+    <div style="margin-top:30px;max-width:720px;margin-left:auto;margin-right:auto">
+      <details class="reveal"><summary>¿Necesito usar Google Calendar?</summary><p>No. Consultorio App funciona por su cuenta, sin conectar nada. Si además usas Google Calendar, puedes conectarla y trabajan juntas —pero es totalmente opcional—.</p></details>
+      <details class="reveal"><summary>¿Necesito tarjeta de crédito para probar?</summary><p>No. Los 7 días son gratis y sin tarjeta. Recién si decides seguir, cargas el pago. Cancelas cuando quieras, sin llamados ni vueltas.</p></details>
+      <details class="reveal"><summary>¿Se instala como una app en el celular?</summary><p>Sí. Se agrega a la pantalla de inicio y se abre como cualquier otra app, con su ícono y a pantalla completa. No hace falta descargarla de ninguna tienda.</p></details>
+      <details class="reveal"><summary>¿Puedo cobrar en varias monedas?</summary><p>Sí. Cada paciente tiene su moneda y su precio. Los informes muestran cada moneda por separado, sin convertir nada ni inventar cotizaciones.</p></details>
+      <details class="reveal"><summary>¿Puedo elegir cómo se ve?</summary><p>Sí. Puedes elegir entre varios temas y activar el modo oscuro, para que la app se sienta cómoda a cualquier hora del día.</p></details>
+      <details class="reveal"><summary>¿Y si atiendo con otros colegas?</summary><p>Cada profesional tiene su cuenta y ve solamente sus propios pacientes. Si además rindes lo cobrado a un equipo, puedes activar el modo liquidación en los ajustes.</p></details>
+    </div>
+  </section>
 
-    <div style="margin-top:28px">
-      <details>
-        <summary>¿Guarda historias clínicas?</summary>
-        <p>No, y es a propósito. Consultorio es una herramienta administrativa: turnos, pagos e informes. No pide ni almacena diagnósticos, evoluciones ni contenido de sesiones. Tus registros clínicos siguen donde vos los tengas.</p>
-      </details>
-      <details>
-        <summary>¿Se instala como una app en el celular?</summary>
-        <p>Sí. Se agrega a la pantalla de inicio y se abre como cualquier otra app, con su ícono y a pantalla completa. No hace falta bajarla de ninguna tienda.</p>
-      </details>
-      <details>
-        <summary>¿Qué pasa con mis datos si dejo de pagar?</summary>
-        <p>Podés exportarlos en cualquier momento, en un archivo que te llevás. Y también eliminarlos por completo desde la app, cuando quieras.</p>
-      </details>
-      <details>
-        <summary>¿Puedo cobrar en varias monedas?</summary>
-        <p>Sí. Cada paciente tiene su moneda y su precio. Los informes muestran cada moneda por separado, sin convertir nada ni inventar cotizaciones.</p>
-      </details>
-      <details>
-        <summary>¿Y si atiendo con otros colegas?</summary>
-        <p>Cada profesional tiene su cuenta y ve solamente sus propios pacientes. Si además rendís lo cobrado a un equipo, podés activar el modo liquidación en los ajustes.</p>
-      </details>
+  <section>
+    <div class="founder reveal">
+      <div class="av">P</div>
+      <div>
+        <p>"Hice Consultorio App porque yo mismo perdía tiempo con planillas y no encontraba nada simple. Es la herramienta que quería tener: hace lo justo, bien, y no te complica la vida."</p>
+        <div class="sig">— Pablo, fundador de Consultorio App</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="final">
+      <h2 class="reveal">Prueba Consultorio App, gratis</h2>
+      <p class="reveal">Siete días para ordenar tu agenda y tus cobros. Sin tarjeta, sin compromiso. Si no es para ti, no pasa nada.</p>
+      <a class="btn reveal" href="/app.html">Empezar ahora</a>
+      <div class="microcopy reveal" style="justify-content:center">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Sin tarjeta · Listo en 2 minutos</span>
+      </div>
     </div>
   </section>
 </div>
@@ -288,38 +458,129 @@
 <footer>
   <div class="wrap">
     <div class="foot">
-      <div>
-        <div class="logo" style="margin-bottom:10px">Consultorio<span>.</span></div>
+      <div style="max-width:300px">
+        <a class="logo" href="/" style="margin-bottom:12px">Consultorio <span>App</span></a>
         <div class="small">Turnos y cobros para profesionales de la salud mental.</div>
       </div>
       <div>
+        <h4>Producto</h4>
+        <a href="#como">Cómo funciona</a>
+        <a href="#precio">Precio</a>
+        <a href="/app.html">Entrar a la app</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
         <a href="/privacidad.html">Política de privacidad</a>
         <a href="/terminos.html">Términos y condiciones</a>
         <a href="mailto:veritasincaritateinstitute@gmail.com">Contacto</a>
       </div>
     </div>
-    <p class="small" style="margin-top:26px">© <span id="yr">2026</span> Consultorio · consultorioapp.com</p>
+    <p class="small" style="margin-top:28px">© <span id="yr">2026</span> Consultorio App · consultorioapp.com</p>
   </div>
 </footer>
 
 <script>
-  // El gesto central: tocar una sesión cicla su estado de pago.
-  const ESTADOS = [
-    {label:'Agendado',  color:'var(--st-prog)'},
-    {label:'Sin pagar', color:'var(--st-unpaid)'},
-    {label:'Pagado',    color:'var(--st-paid)'},
-    {label:'Liquidado', color:'var(--st-liq)'}
-  ];
-  document.querySelectorAll('.srow').forEach((row, i) => {
-    let idx = [0,1,2][i] ?? 0;
-    row.addEventListener('click', () => {
-      idx = (idx + 1) % ESTADOS.length;
-      const e = ESTADOS[idx];
-      row.style.setProperty('--st', e.color);
-      row.querySelector('.spill').textContent = e.label;
+  const ESTADOS = [{key:'prog',label:'Agendado'},{key:'unpaid',label:'Sin pagar'},{key:'paid',label:'Pagado'}];
+  const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
+  const today = new Date();
+
+  // vista Día: fecha de hoy
+  const diaTxt = today.toLocaleDateString('es',{weekday:'long', day:'numeric', month:'long'});
+  document.getElementById('phDay').innerHTML = cap(diaTxt.split(',')[0]) + ' <small>' + diaTxt.split(',').slice(1).join(',').trim() + '</small>';
+  document.getElementById('phMonth').textContent = cap(today.toLocaleDateString('es',{month:'long', year:'numeric'}));
+
+  // balance interactivo
+  const BASE_PAID=418, BASE_DUE=80;
+  const dayRows=[...document.querySelectorAll('.ph-view[data-view="dia"] .srow')];
+  const dayState=[0,1,2];
+  function refreshBalance(){
+    let paid=BASE_PAID, due=BASE_DUE;
+    dayRows.forEach((r,i)=>{ const p=+r.dataset.price, k=ESTADOS[dayState[i]].key; if(k==='paid')paid+=p; else if(k==='unpaid')due+=p; });
+    document.getElementById('bPaid').textContent='US$ '+paid;
+    document.getElementById('bDue').textContent='US$ '+due;
+  }
+  dayRows.forEach((row,i)=>{
+    row.addEventListener('click',()=>{
+      dayState[i]=(dayState[i]+1)%ESTADOS.length;
+      const e=ESTADOS[dayState[i]];
+      row.setAttribute('data-state', e.key);
+      row.querySelector('.spill').textContent=e.label;
+      refreshBalance();
     });
   });
-  document.getElementById('yr').textContent = new Date().getFullYear();
+  refreshBalance();
+
+  // temas: cambian TODA la web
+  document.querySelectorAll('.tp').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.tp').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      document.body.classList.remove('t-nieve','t-arena','t-dark');
+      if(b.dataset.t) document.body.classList.add(b.dataset.t);
+    });
+  });
+
+  // pestañas Día/Semana/Mes
+  document.querySelectorAll('.pt2').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.pt2').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      document.querySelectorAll('.ph-view').forEach(v=>v.hidden = (v.dataset.view!==b.dataset.v));
+    });
+  });
+
+  // generador determinístico
+  const NAMES=['Ana P. 🇦🇷','Bruno M. 🇺🇾','Carla S. 🇨🇱','Diego R. 🇲🇽','Elena V. 🇪🇸','Facundo T. 🇦🇷','Gabriela L. 🇨🇴','Hugo N. 🇵🇪','Irene C. 🇻🇪','Joaquín D. 🇪🇨'];
+  const CNT=[1,2,3,2,1,3,2,1,2,3,1,2,2,3,1,2,1,3,2,1,2,3,1,2,2,3,1,2,1,2,2];
+  const S3=['prog','unpaid','paid'];
+  function turnos(day){ const n=CNT[(day-1)%CNT.length]; const out=[]; for(let k=0;k<n;k++) out.push([NAMES[(day*3+k)%NAMES.length], S3[(day+k)%3]]); return out; }
+  const HORAS=['09:00','11:00','15:00','17:00','19:00'];
+  const LBL={prog:'Agendado',unpaid:'Sin pagar',paid:'Pagado'};
+
+  // vista Semana (semana actual, Lun-Vie)
+  const monday=new Date(today); monday.setDate(today.getDate()-((today.getDay()+6)%7));
+  let wk='';
+  for(let i=0;i<5;i++){
+    const d=new Date(monday); d.setDate(monday.getDate()+i); const dn=d.getDate();
+    const dl=cap(d.toLocaleDateString('es',{weekday:'short'}))+' '+dn;
+    const ts=turnos(dn).slice(0,3);
+    let chips=ts.map((t,j)=>`<div class="wchip st-${t[1]}" data-st="${t[1]}"><span class="wt">${HORAS[j%HORAS.length]}</span><span class="wn">${t[0]}</span><span class="wp">${LBL[t[1]]}</span></div>`).join('');
+    if(!ts.length) chips='<div style="font-size:12.5px;color:var(--muted);padding:2px 2px 6px">Sin turnos</div>';
+    wk+=`<div class="wkday"><div class="wl">${dl}</div>${chips}</div>`;
+  }
+  document.getElementById('phWeek').innerHTML=wk;
+  // vista Semana: tocar una sesión cambia su estado
+  document.querySelectorAll('#phWeek .wchip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      const next=S3[(S3.indexOf(chip.dataset.st)+1)%3];
+      chip.dataset.st=next;
+      chip.classList.remove('st-prog','st-unpaid','st-paid');
+      chip.classList.add('st-'+next);
+      chip.querySelector('.wp').textContent=LBL[next];
+    });
+  });
+
+  // vista Mes (mes actual, Lun-Vie, puntos)
+  const Y=today.getFullYear(), M=today.getMonth(), todayNum=today.getDate();
+  const daysIn=new Date(Y,M+1,0).getDate();
+  const cells=[];
+  for(let d=1; d<=daysIn; d++){ const wd=new Date(Y,M,d).getDay(); if(wd===0||wd===6) continue; if(cells.length===0){ for(let c=0;c<wd-1;c++) cells.push(null); } cells.push(d); }
+  while(cells.length%5) cells.push(null);
+  let mg=['Lun','Mar','Mié','Jue','Vie'].map(d=>`<div class="mdow">${d}</div>`).join('');
+  cells.forEach(d=>{
+    if(d===null){ mg+='<div class="mcell empty"></div>'; return; }
+    const dots=turnos(d).slice(0,6).map(t=>`<span class="mdot st-${t[1]}"></span>`).join('');
+    mg+=`<div class="mcell${d===todayNum?' today':''}"><div class="mnum">${d}</div><div class="mdots">${dots}</div></div>`;
+  });
+  document.getElementById('phGrid').innerHTML=mg;
+
+  // nav + reveal
+  const nav=document.getElementById('navbar');
+  const onScroll=()=>nav.classList.toggle('scrolled', window.scrollY>8);
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+  const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  document.getElementById('yr').textContent=new Date().getFullYear();
 </script>
 
 </body>
