@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<script>try{if(new URLSearchParams(location.search).get('paid')==='1'){if(window.fbq)fbq('track','Purchase',{value:4.00,currency:'USD'});history.replaceState({},'',location.pathname);}}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="color-scheme" content="light">
 <meta name="apple-mobile-web-app-title" content="Consultorio">
@@ -1260,6 +1261,7 @@ function checkEntitlement(){
 }
 async function billStartStripe(){
   const u=cloud.user; if(!u||!cloud.db) return;
+  if(window.fbq){try{fbq('track','InitiateCheckout',{value:4.00,currency:'USD'});}catch(e){}}
   const errEl=document.getElementById('billErr'); errEl.style.display='none';
   const btn=document.getElementById('billStripe'), old=btn.textContent; btn.disabled=true; btn.textContent='Abriendo el pago\u2026';
   try{
@@ -1271,7 +1273,7 @@ async function billStartStripe(){
       if(rec){ priceId=rec.id; break; }
     }
     if(!priceId) throw new Error('El plan todav\u00eda no est\u00e1 sincronizado desde Stripe.');
-    const ref=await cloud.db.collection('customers').doc(u.uid).collection('checkout_sessions').add({price:priceId,mode:'subscription',allow_promotion_codes:true,success_url:location.href,cancel_url:location.href});
+    const ref=await cloud.db.collection('customers').doc(u.uid).collection('checkout_sessions').add({price:priceId,mode:'subscription',allow_promotion_codes:true,success_url:location.origin+location.pathname+'?paid=1',cancel_url:location.href});
     const stop=ref.onSnapshot(s=>{ const d=s.data()||{};
       if(d.error){ stop(); btn.disabled=false; btn.textContent=old; errEl.textContent=d.error.message||'Error al iniciar el pago.'; errEl.style.display='block'; }
       if(d.url){ stop(); location.assign(d.url); }
@@ -1378,7 +1380,7 @@ function fbAuth(create){
   const em=document.getElementById('fbEmail').value.trim(), pw=document.getElementById('fbPass').value;
   const errEl=document.getElementById('fbErr'); errEl.style.display='none';
   const p=create?cloud.auth.createUserWithEmailAndPassword(em,pw):cloud.auth.signInWithEmailAndPassword(em,pw);
-  p.then(()=>{ document.getElementById('fbPass').value=''; hide('syncScrim'); if(create&&window.fbq){try{fbq('track','CompleteRegistration');fbq('track','StartTrial',{value:4.00,currency:'USD',predicted_ltv:48.00});}catch(e){}} }).catch(e=>{ errEl.textContent=fbErrMsg(e); errEl.style.display='block'; });
+  p.then(()=>{ document.getElementById('fbPass').value=''; hide('syncScrim'); if(window.fbq){try{ if(create){fbq('track','CompleteRegistration');fbq('track','StartTrial',{value:4.00,currency:'USD',predicted_ltv:48.00});} else {fbq('trackCustom','Login');} }catch(e){}} }).catch(e=>{ errEl.textContent=fbErrMsg(e); errEl.style.display='block'; });
 }
 document.getElementById('btnPat').onclick=()=>switchView('pat');
 document.getElementById('btnSync').onclick=()=>{ if(cloud.user){ fillAccountInfo(); show('setScrim'); } else openSyncSheet(); };

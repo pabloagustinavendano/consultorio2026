@@ -8,6 +8,7 @@
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq('init','339784632165339');
 fbq('track','PageView');
+fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
 </script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=339784632165339&ev=PageView&noscript=1"/></noscript>
 <!-- End Meta Pixel Code -->
@@ -580,6 +581,7 @@ fbq('track','PageView');
   onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
   const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  document.querySelectorAll('a.btn[href="/app.html"]:not(.btn-ghost)').forEach(a=>a.addEventListener('click',()=>{ if(window.fbq) fbq('trackCustom','ClickProbarGratis'); }));
   document.getElementById('yr').textContent=new Date().getFullYear();
 </script>
 
