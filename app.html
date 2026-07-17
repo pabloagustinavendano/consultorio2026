@@ -417,6 +417,7 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   <div class="field"><label>Subtítulo (opcional)</label><input id="cfgSub" placeholder="Ej: Lic. Juan Pérez"></div>
   <div class="setrow"><span>Logo</span><span><button class="link" id="logoPick">Cambiar</button> · <button class="link danger" id="logoClear">Quitar</button></span></div>
   <div class="field"><label>Moneda principal</label><select id="cfgCur"><option value="USD">US$ (dólar)</option><option value="ARS">$ (peso)</option><option value="EUR">€ (euro)</option></select></div>
+  <div class="field"><label>Precio de sesión (estándar)</label><input type="number" id="cfgPrice" inputmode="decimal" placeholder="Ej: 40"></div>
   </div>
   <input type="file" id="logoFile" accept="image/*" style="display:none">
 
@@ -1084,7 +1085,7 @@ function selPatStatus(){const b=document.querySelector('#pStatusPick button.sel'
 function openPatient(id){const p=id?patients.find(x=>x.id===id):null;editingP=p;
   document.getElementById('patTitle').textContent=p?'Editar paciente':'Nuevo paciente';fillCountry();
   document.getElementById('pName').value=p?p.name:'';document.getElementById('pCountry').value=p?(p.country||''):'';
-  document.getElementById('pPrice').value=p&&p.price!=null?p.price:38;
+  document.getElementById('pPrice').value=p&&p.price!=null?p.price:(settings.defaultPrice!=null?settings.defaultPrice:defPriceCur(settings.currency||'USD'));
   document.getElementById('pNote').value=p&&p.note?p.note:'';
   document.getElementById('pCur').value=p?patCur(p):'USD';
   updatePPriceLabel();
@@ -1186,7 +1187,7 @@ function onLoggedIn(){
   if(cloud.unsub) cloud.unsub();
   cloud.unsub=ref.onSnapshot(async snap=>{
     cloud.ready=true;
-    if(!snap.exists){ seed(); cloud.lastWrite=null; await saveAll(); applyBranding(); render(); return; }
+    if(!snap.exists){ seed(); try{document.documentElement.removeAttribute('data-skin');document.documentElement.setAttribute('data-theme','light');localStorage.setItem('psa_theme','light');localStorage.removeItem('psa_skin');}catch(e){} cloud.lastWrite=null; await saveAll(); applyBranding(); render(); return; }
     const d=snap.data()||{};
     const incoming=JSON.stringify({patients:d.patients||[],sessions:d.sessions||[],settings:d.settings||{}});
     if(incoming===cloud.lastWrite) return;
@@ -1330,6 +1331,7 @@ function fillAccountInfo(){
   if(cn) cn.value=settings.clinicName||'';
   if(cs) cs.value=settings.clinicSub||'';
   if(cc) cc.value=settings.currency||'USD';
+  const cpr=document.getElementById('cfgPrice'); if(cpr) cpr.value=(settings.defaultPrice!=null?settings.defaultPrice:'');
   const cl=document.getElementById('cfgLiq'); if(cl) cl.checked=liqOn();
   const cd=document.getElementById('cfgDark'); if(cd) cd.checked=document.documentElement.getAttribute('data-theme')==='dark';
 }
@@ -1397,6 +1399,7 @@ async function saveClinic(){
   settings.clinicName=document.getElementById('cfgName').value.trim()||'Consultorio';
   settings.clinicSub=document.getElementById('cfgSub').value.trim();
   settings.currency=document.getElementById('cfgCur').value||'USD';
+  { const _p=parseFloat(document.getElementById('cfgPrice').value); settings.defaultPrice=isNaN(_p)?null:_p; }
   settings.liqMode=document.getElementById('cfgLiq').checked;
   await saveAll(); applyBranding(); render();
 }
