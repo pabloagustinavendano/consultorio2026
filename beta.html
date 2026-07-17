@@ -416,6 +416,12 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   </div>
   <input type="file" id="logoFile" accept="image/*" style="display:none">
 
+  <div class="setsec" id="secInstall">Instalar app</div>
+  <div class="setgroup" id="grpInstall">
+  <div class="setrow"><span>Usala como app en tu celu o compu</span><button class="link" id="installOpen">Cómo</button></div>
+  <div class="hint" style="margin:2px 2px 4px">Se abre a pantalla completa, sin la barra del navegador, y queda con su ícono. No ocupa espacio como una app común.</div>
+  </div>
+
   <div class="setsec">Google Calendar</div>
   <div class="setgroup">
   <div class="setrow"><span id="gcalState" style="color:var(--muted);font-size:14px">—</span><span><button class="link" id="gcalConnect">Conectar</button><button class="link" id="gcalSync" style="display:none">Sincronizar</button> <button class="link danger" id="gcalDisconnect" style="display:none">Desconectar</button></span></div>
@@ -1415,6 +1421,33 @@ document.getElementById('btnLook').onclick=()=>{ const cd=document.getElementByI
 document.getElementById('lookClose').onclick=()=>hide('lookScrim');
 document.querySelectorAll('#lookScrim .themeopt').forEach(o=>{ o.onclick=()=>applySkin(o.getAttribute('data-skin')); });
 document.querySelectorAll('#setScrim .setsec').forEach(s=>{ s.onclick=()=>s.classList.toggle('closed'); });
+/* ---- Instalar como app (PWA) ---- */
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferredInstallPrompt=e; const si=document.getElementById('secInstall'); if(si) si.classList.remove('closed'); });
+function isStandalonePWA(){ try{ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true; }catch(e){ return false; } }
+function detectPlatform(){ const ua=navigator.userAgent||''; if(/iPhone|iPad|iPod/i.test(ua)) return 'ios'; if(/Android/i.test(ua)) return 'android'; return 'desktop'; }
+function installSteps(p){
+  const ol='margin:8px 0 0;padding-left:22px;line-height:1.75;font-size:14px';
+  if(p==='ios') return '<b>En tu iPhone o iPad (con Safari):</b><ol style="'+ol+'"><li>Tocá el botón <b>Compartir</b> (el cuadradito con la flecha hacia arriba).</li><li>Deslizá hacia abajo y tocá <b>“Agregar a inicio”</b>.</li><li>Tocá <b>Agregar</b>. Te queda el ícono de Consultorio en la pantalla.</li></ol>';
+  if(p==='android') return '<b>En tu Android (con Chrome):</b><ol style="'+ol+'"><li>Tocá el menú <b>⋮</b> (arriba a la derecha).</li><li>Tocá <b>“Instalar app”</b> o <b>“Agregar a pantalla de inicio”</b>.</li><li>Confirmá. Te queda el ícono como una app más.</li></ol>';
+  return '<b>En tu computadora (Chrome o Edge):</b><ol style="'+ol+'"><li>En la barra de direcciones, tocá el ícono de instalar <b>⊕</b> (a la derecha de la dirección).</li><li>Si no lo ves, abrí el menú <b>⋮</b> → <b>“Instalar Consultorio”</b>.</li><li>Confirmá: se abre en su propia ventana, como un programa.</li></ol>';
+}
+function openInstall(){
+  let sc=document.getElementById('installScrim');
+  if(!sc){
+    sc=document.createElement('div'); sc.className='scrim'; sc.id='installScrim';
+    sc.innerHTML='<div class="sheet"><h2>Instalar Consultorio</h2><p style="color:var(--muted);font-size:14px;margin:2px 2px 12px">Instalala para abrirla de un toque, a pantalla completa y sin la barra del navegador. Son los mismos datos: solo cambia el acceso.</p><div id="installNative" style="display:none;margin:0 0 14px"><button class="btn btn-primary" id="installNativeBtn" style="width:100%">Instalar ahora</button></div><div id="installSteps"></div><button class="btn" id="installClose" style="width:100%;margin-top:16px">Cerrar</button></div>';
+    document.body.appendChild(sc);
+    sc.addEventListener('click',e=>{ if(e.target===sc) hide('installScrim'); });
+    document.getElementById('installClose').onclick=()=>hide('installScrim');
+    document.getElementById('installNativeBtn').onclick=async()=>{ if(deferredInstallPrompt){ deferredInstallPrompt.prompt(); try{ await deferredInstallPrompt.userChoice; }catch(e){} deferredInstallPrompt=null; hide('installScrim'); } };
+  }
+  document.getElementById('installSteps').innerHTML=installSteps(detectPlatform());
+  document.getElementById('installNative').style.display=deferredInstallPrompt?'block':'none';
+  show('installScrim');
+}
+{ const io=document.getElementById('installOpen'); if(io) io.onclick=openInstall; }
+if(isStandalonePWA()){ const si=document.getElementById('secInstall'), gi=document.getElementById('grpInstall'); if(si)si.style.display='none'; if(gi)gi.style.display='none'; }
 document.getElementById('openRestore').onclick=openRestore;
 document.getElementById('restoreClose').onclick=()=>hide('restoreScrim');
 document.getElementById('acctPass').onclick=acctChangePass;
