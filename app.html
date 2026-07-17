@@ -693,9 +693,9 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 /* ---------- Seed ---------- */
 function seed(){
   const pid=uid();
-  patients=[{id:pid,name:'Ana López (ejemplo)',country:'',price:defPrice(''),status:'activo',active:true,note:'Ejemplo · tocá para editarlo o borrarlo',currency:'USD'}];
-  sessions=[{id:uid(),patientId:pid,date:ymd(REALTODAY),time:'15:00',price:defPrice(''),status:'unpaid',note:''}];
-  settings={currency:'USD',showBanner:true,logo:GENERIC_LOGO};
+  patients=[{id:pid,name:'Ana López (ejemplo)',country:'',price:40,status:'activo',active:true,note:'Ejemplo · tocá para editarlo o borrarlo',currency:'USD'}];
+  sessions=[{id:uid(),patientId:pid,date:ymd(REALTODAY),time:'15:00',price:40,status:'unpaid',note:''}];
+  settings={currency:'USD',showBanner:true,logo:GENERIC_LOGO,defaultPrice:40};
 }
 async function loadAll(){ await Store.init();
   const p=await Store.get('psa8_patients'),s=await Store.get('psa8_sessions'),st=await Store.get('psa8_settings');
@@ -1311,7 +1311,7 @@ function applyBranding(){
   const bl=document.getElementById('brandLogo');
   if(bl){ if(settings.logo){ bl.src=settings.logo; bl.style.display=''; } else { bl.style.display='none'; } }
   if(bn) bn.textContent=n;
-  if(bs){ const yr=new Date().getFullYear(); bs.textContent=s?(s+' \u00b7 '+yr):String(yr); }
+  if(bs){ bs.textContent=s; }
   document.title=n;
 }
 function setSyncStatus(){
