@@ -505,6 +505,17 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
   </div>
 </footer>
 
+<!-- Botón flotante de WhatsApp (atención al cliente) -->
+<a id="wa-float" href="https://wa.me/5493814809398?text=Hola%2C%20tengo%20una%20consulta%20sobre%20Consultorio%20App" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">
+  <svg viewBox="0 0 32 32" width="30" height="30" fill="#fff" aria-hidden="true"><path d="M16.04 4C9.9 4 4.92 8.98 4.92 15.12c0 2.05.55 4.05 1.6 5.81L4.8 27.2l6.43-1.69a11.06 11.06 0 0 0 4.8 1.09h.01c6.14 0 11.12-4.98 11.12-11.12S22.18 4 16.04 4Zm0 20.3h-.01c-1.5 0-2.98-.4-4.27-1.17l-.31-.18-3.82 1 1.02-3.72-.2-.32a9.16 9.16 0 0 1-1.4-4.9c0-5.07 4.13-9.2 9.2-9.2 2.46 0 4.77.96 6.5 2.7a9.13 9.13 0 0 1 2.69 6.5c0 5.08-4.13 9.2-9.2 9.2Zm5.05-6.89c-.28-.14-1.64-.81-1.89-.9-.25-.09-.43-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-.28-.14-1.17-.43-2.23-1.38-.82-.73-1.38-1.64-1.54-1.92-.16-.28-.02-.43.12-.57.13-.13.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.35-.02-.48-.07-.14-.62-1.5-.85-2.06-.22-.54-.45-.47-.62-.48l-.53-.01c-.18 0-.48.07-.73.35-.25.28-.96.94-.96 2.3 0 1.36.99 2.67 1.12 2.85.14.18 1.94 2.96 4.7 4.15.66.28 1.17.45 1.57.58.66.21 1.26.18 1.73.11.53-.08 1.64-.67 1.87-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33Z"/></svg>
+</a>
+<style>
+  #wa-float{position:fixed;right:20px;bottom:20px;z-index:900;width:56px;height:56px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.22);transition:transform .18s ease,box-shadow .18s ease}
+  #wa-float:hover{transform:scale(1.07);box-shadow:0 8px 26px rgba(0,0,0,.28)}
+  #wa-float:active{transform:scale(.98)}
+  @media (max-width:560px){ #wa-float{right:16px;bottom:16px;width:52px;height:52px} }
+</style>
+
 <script>
   const ESTADOS = [{key:'prog',label:'Agendado'},{key:'unpaid',label:'Sin pagar'},{key:'paid',label:'Pagado'}];
   const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
