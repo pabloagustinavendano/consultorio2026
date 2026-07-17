@@ -364,7 +364,7 @@ html[data-theme="dark"] .sw span{background:var(--line)}
     <div class="field"><label>País</label><select id="pCountry"></select></div>
     <div class="field"><label id="pPriceLbl">Precio fijo</label><input type="number" id="pPrice" inputmode="decimal" placeholder="0"></div>
   </div>
-  <div class="field"><label>Moneda</label><select id="pCur"><option value="USD">US$ (dólar)</option><option value="ARS">$ (peso argentino)</option><option value="EUR">€ (euro)</option></select></div>
+  <div class="field"><label>Moneda</label><select id="pCur"><option value="USD">US$ (dólar)</option><option value="ARS">$ (peso)</option><option value="EUR">€ (euro)</option></select></div>
   <div class="field"><label>Estado</label><div class="statuspick" id="pStatusPick"></div></div>
   <div class="field"><label>Observación</label><textarea id="pNote" rows="2" placeholder="Ej: frecuencia quincenal, notas del paciente…" style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font-family:monospace;font-size:12px;background:var(--bg);color:var(--ink);resize:vertical;resize:vertical;box-sizing:border-box"></textarea></div>
   
@@ -416,7 +416,7 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   <div class="field" style="margin-top:2px"><label>Nombre</label><input id="cfgName" placeholder="Consultorio"></div>
   <div class="field"><label>Subtítulo (opcional)</label><input id="cfgSub" placeholder="Ej: Lic. Juan Pérez"></div>
   <div class="setrow"><span>Logo</span><span><button class="link" id="logoPick">Cambiar</button> · <button class="link danger" id="logoClear">Quitar</button></span></div>
-  <div class="field"><label>Moneda principal</label><select id="cfgCur"><option value="USD">US$ (dólar)</option><option value="ARS">AR$ (peso argentino)</option><option value="EUR">€ (euro)</option></select></div>
+  <div class="field"><label>Moneda principal</label><select id="cfgCur"><option value="USD">US$ (dólar)</option><option value="ARS">$ (peso)</option><option value="EUR">€ (euro)</option></select></div>
   </div>
   <input type="file" id="logoFile" accept="image/*" style="display:none">
 
@@ -532,6 +532,7 @@ function sameDay(a,b){return ymd(a)===ymd(b);}
 function money(n){const sym={EUR:'€',USD:'US$',ARS:'AR$'}[settings.currency]||'US$';return sym+' '+(Number(n)||0).toLocaleString('es-ES');}
 function curOf(c){return c==='AR'?'ARS':'USD';}
 const CURS={USD:{sym:'US$',def:38},ARS:{sym:'$',def:50000},EUR:{sym:'€',def:35}};
+const GENERIC_LOGO='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj48cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgcng9IjI2IiBmaWxsPSIjMkY2RjYyIi8+PHBhdGggZD0iTTM4IDYybDE2IDE2IDMwLTM2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iOSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+';
 function patCur(p){ if(p&&p.currency&&CURS[p.currency]) return p.currency; return curOf(p?p.country:''); }
 function defPrice(c){return c==='AR'?50000:38;}
 function defPriceCur(cur){ return (CURS[cur]||CURS.USD).def; }
@@ -690,11 +691,10 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 
 /* ---------- Seed ---------- */
 function seed(){
-  const DATA={"patients":[],"sessions":[]};
-  patients=DATA.patients.map(p=>({id:uid(),name:p.name,country:p.country||'',price:p.price,status:p.status||'activo',active:true}));
-  const idByName={};patients.forEach(p=>idByName[p.name]=p.id);
-  sessions=DATA.sessions.map(s=>({id:uid(),patientId:idByName[s.patient],date:s.date,time:s.time,price:s.price,status:s.status,note:s.note||''})).filter(s=>s.patientId);
-  settings={currency:'USD',showBanner:true};
+  const pid=uid();
+  patients=[{id:pid,name:'Ana López (ejemplo)',country:'',price:defPrice(''),status:'activo',active:true,note:'Ejemplo · tocá para editarlo o borrarlo',currency:'USD'}];
+  sessions=[{id:uid(),patientId:pid,date:ymd(REALTODAY),time:'15:00',price:defPrice(''),status:'unpaid',note:''}];
+  settings={currency:'USD',showBanner:true,logo:GENERIC_LOGO};
 }
 async function loadAll(){ await Store.init();
   const p=await Store.get('psa8_patients'),s=await Store.get('psa8_sessions'),st=await Store.get('psa8_settings');
@@ -1186,7 +1186,7 @@ function onLoggedIn(){
   if(cloud.unsub) cloud.unsub();
   cloud.unsub=ref.onSnapshot(async snap=>{
     cloud.ready=true;
-    if(!snap.exists){ patients=[]; sessions=[]; cloud.lastWrite=null; render(); return; }
+    if(!snap.exists){ seed(); cloud.lastWrite=null; await saveAll(); applyBranding(); render(); return; }
     const d=snap.data()||{};
     const incoming=JSON.stringify({patients:d.patients||[],sessions:d.sessions||[],settings:d.settings||{}});
     if(incoming===cloud.lastWrite) return;
