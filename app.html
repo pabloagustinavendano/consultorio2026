@@ -188,6 +188,11 @@ h2{margin:0;font-weight:600}
 .btn{flex:1;padding:13px;border-radius:11px;font-weight:600;font-size:15px;min-width:90px}
 .btn-primary{background:var(--brand);color:#fff}.btn-ghost{background:var(--line2);color:var(--ink)}
 .btn-danger{background:var(--cs-tocollect);color:var(--c-tocollect);flex:none;padding:13px 16px;min-width:0}
+.btn-wa{background:var(--surface);border:1.5px solid #25D366;color:#128a3e;width:100%;flex:none;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-wa:active{background:#eafaf0}
+#sessDupRow{margin-top:10px}
+.btn-dellink{display:block;width:100%;background:none;border:none;color:#c0392b;font-weight:600;font-size:14px;padding:10px;margin-top:4px;cursor:pointer;font-family:inherit;border-radius:8px}
+.btn-dellink:active{background:var(--cs-tocollect)}
 .btn-soft{background:var(--brand-soft);color:var(--brand);flex:none;min-width:0;padding:13px 16px}
 .sw{position:relative;display:inline-block;width:42px;height:24px;flex:none}
 .sw input{opacity:0;width:0;height:0}
@@ -348,13 +353,15 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   </div>
   <div class="field"><label>Nota (opcional)</label><input type="text" id="fNote" placeholder="ej: cambió de hora, bonificada…"></div>
   <div class="actions">
-    <button class="btn btn-soft" id="sessDup" style="display:none">Duplicar +1 sem</button>
-    <button class="btn btn-soft" id="sessDup2" style="display:none">Duplicar +2 sem</button>
     <button class="btn btn-ghost" id="sessCancel">Cancelar</button>
-    <button class="btn btn-primary" id="sessSave">Guardar</button>
+    <button class="btn btn-primary" id="sessSave" style="flex:1.7">Guardar</button>
   </div>
-  <button class="btn" id="sessRemind" style="display:none;width:100%;margin-top:10px;background:#25D366;color:#fff;border:none;font-weight:700">Recordar por WhatsApp</button>
-  <button class="btn btn-danger" id="sessDelete" style="display:none;width:100%;margin-top:10px">Borrar turno</button>
+  <button class="btn btn-wa" id="sessRemind" style="display:none"><svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16 4C9.9 4 5 8.9 5 15c0 2 .5 3.9 1.5 5.6L5 27l6.6-1.5A11 11 0 1 0 16 4Zm0 20a9 9 0 0 1-4.6-1.3l-.3-.2-3.8 1 1-3.7-.2-.3A9 9 0 1 1 16 24Zm5-6.8c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1l-.8 1c-.2.2-.3.2-.5.1-1.1-.5-1.8-1-2.5-2.2-.2-.3 0-.4.1-.6l.4-.5.2-.4v-.5l-.9-2c-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.1-.7.3-.7.7-.9 1.7-.4 2.8a9 9 0 0 0 3.9 3.9c1.4.6 2 .6 2.7.5.5-.1 1.6-.7 1.8-1.3.2-.6.2-1.1.2-1.2l-.5-.3Z"/></svg>Recordar por WhatsApp</button>
+  <div class="actions" id="sessDupRow">
+    <button class="btn btn-soft" id="sessDup" style="display:none;flex:1">Duplicar +1 sem</button>
+    <button class="btn btn-soft" id="sessDup2" style="display:none;flex:1">Duplicar +2 sem</button>
+  </div>
+  <button class="btn-dellink" id="sessDelete" style="display:none">Borrar turno</button>
 </div></div>
 
 <!-- Patient sheet -->
@@ -528,6 +535,8 @@ const PAT_STATUS={activo:{label:'Activo',c:'var(--c-collected)',cs:'var(--cs-col
 let patFilter={q:'',status:'all'};
 const CYCLE=['prog','unpaid','tocollect','collected']; // tap-to-advance
 const COUNTRIES={AR:{f:'🇦🇷',n:'Argentina'},MX:{f:'🇲🇽',n:'México'},ESP:{f:'🇪🇸',n:'España'},ECU:{f:'🇪🇨',n:'Ecuador'},CH:{f:'🇨🇱',n:'Chile'},BOL:{f:'🇧🇴',n:'Bolivia'},PE:{f:'🇵🇪',n:'Perú'},CO:{f:'🇨🇴',n:'Colombia'},VE:{f:'🇻🇪',n:'Venezuela'},PY:{f:'🇵🇾',n:'Paraguay'},UY:{f:'🇺🇾',n:'Uruguay'},GT:{f:'🇬🇹',n:'Guatemala'},HN:{f:'🇭🇳',n:'Honduras'},SV:{f:'🇸🇻',n:'El Salvador'},NI:{f:'🇳🇮',n:'Nicaragua'},CR:{f:'🇨🇷',n:'Costa Rica'},PA:{f:'🇵🇦',n:'Panamá'},DO:{f:'🇩🇴',n:'Rep. Dominicana'},CU:{f:'🇨🇺',n:'Cuba'},PR:{f:'🇵🇷',n:'Puerto Rico'},BR:{f:'🇧🇷',n:'Brasil'},US:{f:'🇺🇸',n:'Estados Unidos'},CA:{f:'🇨🇦',n:'Canadá'},ITA:{f:'🇮🇹',n:'Italia'},PT:{f:'🇵🇹',n:'Portugal'},FR:{f:'🇫🇷',n:'Francia'},DE:{f:'🇩🇪',n:'Alemania'},GB:{f:'🇬🇧',n:'Reino Unido'},AU:{f:'🇦🇺',n:'Australia'},'':{f:'🌐',n:'Sin país'}};
+const DIAL={AR:'+54 9 ',MX:'+52 ',ESP:'+34 ',ECU:'+593 ',CH:'+56 9 ',BOL:'+591 ',PE:'+51 ',CO:'+57 ',VE:'+58 ',PY:'+595 ',UY:'+598 ',GT:'+502 ',HN:'+504 ',SV:'+503 ',NI:'+505 ',CR:'+506 ',PA:'+507 ',DO:'+1 ',CU:'+53 ',PR:'+1 ',BR:'+55 ',US:'+1 ',CA:'+1 ',ITA:'+39 ',PT:'+351 ',FR:'+33 ',DE:'+49 ',GB:'+44 ',AU:'+61 ','':''};
+function dialFor(cc){return DIAL[cc]||'';}
 const MONTHS=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const DOW=['lun','mar','mié','jue','vie','sáb','dom'];
 const DOWLONG=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'];
@@ -883,7 +892,7 @@ function renderCal(){
     const isT=ds===ymd(REALTODAY);
     let chips='';
     ses.slice(0,7).forEach(s=>{const pp=patientById(s.patientId);
-      chips+=`<div class="chip${hasConflict(s)?' clash':''}" data-sid="${s.id}" style="${st(s.status)}"><span class="t">${fmtTime(s.time)}</span><span class="n">${pp?((COUNTRIES[pp.country]||COUNTRIES['']).f+' '+esc(pp.name)):'—'}</span>${hasConflict(s)?' ⚠️':''}${(pp&&pp.pending)?' ❓':''}</div>`;});
+      chips+=`<div class="chip${hasConflict(s)?' clash':''}" data-sid="${s.id}" style="${st(s.status)}"><span class="t">${fmtTime(s.time)}</span><span class="n">${pp?(esc(pp.name)+' '+(COUNTRIES[pp.country]||COUNTRIES['']).f):'—'}</span>${hasConflict(s)?' ⚠️':''}${(pp&&pp.pending)?' ❓':''}</div>`;});
     if(ses.length>7) chips+=`<div class="more">+${ses.length-7} más</div>`;
     const cnt=ses.length?`<div class="dcnt">${ses.length} turno${ses.length>1?'s':''}</div>`:'';
     const dsum=summaryOf(ses);
@@ -991,13 +1000,13 @@ function openSession(id,presetDate){
   document.getElementById('fRepeat').value='0';
   if(s){sel.value=s.patientId;prevPatientVal=s.patientId;document.getElementById('fDate').value=s.date;document.getElementById('fTime').value=s.time;
     document.getElementById('fPrice').value=s.price;document.getElementById('fNote').value=s.note||'';buildStatus(s.status);
-    document.getElementById('sessDelete').style.display='block';document.getElementById('sessDup').style.display='block';document.getElementById('sessDup2').style.display='block';document.getElementById('sessRemind').style.display='block';
+    document.getElementById('sessDelete').style.display='block';document.getElementById('sessDup').style.display='block';document.getElementById('sessDup2').style.display='block';document.getElementById('sessRemind').style.display='flex';document.getElementById('sessDupRow').style.display='flex';
   } else {
     document.getElementById('fDate').value=presetDate||ymd(currentView==='day'?selDay:new Date(viewMonth.getFullYear(),viewMonth.getMonth(),Math.min(REALTODAY.getDate(),28)));
     if(sel.options.length>1)sel.selectedIndex=1;
     document.getElementById('fTime').value='17:00';const p=patientById(sel.value);document.getElementById('fPrice').value=p&&p.price!=null?p.price:'';
     document.getElementById('fNote').value='';buildStatus('prog');
-    document.getElementById('sessDelete').style.display='none';document.getElementById('sessDup').style.display='none';document.getElementById('sessDup2').style.display='none';document.getElementById('sessRemind').style.display='none';
+    document.getElementById('sessDelete').style.display='none';document.getElementById('sessDup').style.display='none';document.getElementById('sessDup2').style.display='none';document.getElementById('sessRemind').style.display='none';document.getElementById('sessDupRow').style.display='none';
   }
   prevPatientVal=sel.value;
   sel.onchange=()=>{if(sel.value==='__new__'){openNewPatientFromSession();return;}prevPatientVal=sel.value;const p=patientById(sel.value);if(p&&!editing)document.getElementById('fPrice').value=p.price!=null?p.price:'';updateFPriceLabel();};
@@ -1111,7 +1120,7 @@ function openPatient(id){const p=id?patients.find(x=>x.id===id):null;editingP=p;
   document.getElementById('pPrice').value=p&&p.price!=null?p.price:(settings.defaultPrice!=null?settings.defaultPrice:defPriceCur(settings.currency||'USD'));
   document.getElementById('pNote').value=p&&p.note?p.note:'';
   document.getElementById('pCur').value=p?patCur(p):'USD';
-  document.getElementById('pPhone').value=p&&p.phone?p.phone:'';
+  document.getElementById('pPhone').value=p&&p.phone?p.phone:dialFor(p?(p.country||''):'');
   updatePPriceLabel();
   buildPatStatus(p?(p.status||'activo'):'activo');
   document.getElementById('patDelete').style.display=p?'block':'none';show('patScrim');}
@@ -1145,7 +1154,7 @@ document.getElementById('sessCancel').onclick=()=>hide('sessScrim');
 document.getElementById('sessDelete').onclick=deleteSession;
 document.getElementById('sessDup').onclick=()=>dupSession(1);document.getElementById('sessDup2').onclick=()=>dupSession(2);
 document.getElementById('patSave').onclick=savePatient;
-document.getElementById('pCountry').onchange=()=>{ if(!editingP){ const c=document.getElementById('pCountry').value; const cur=curOf(c); document.getElementById('pCur').value=cur; const v=document.getElementById('pPrice').value.trim(); if(v===''||v==='38'||v==='50000'||v==='35') document.getElementById('pPrice').value=defPriceCur(cur); } updatePPriceLabel(); };
+document.getElementById('pCountry').onchange=()=>{ if(!editingP){ const c=document.getElementById('pCountry').value; const cur=curOf(c); document.getElementById('pCur').value=cur; const v=document.getElementById('pPrice').value.trim(); if(v===''||v==='38'||v==='50000'||v==='35') document.getElementById('pPrice').value=defPriceCur(cur); } { const ph=document.getElementById('pPhone'); const dg=(ph.value||'').replace(/[^\d]/g,''); if(dg.length<=4) ph.value=dialFor(document.getElementById('pCountry').value); } updatePPriceLabel(); };
 document.getElementById('pCur').onchange=()=>{ const cur=document.getElementById('pCur').value; const v=document.getElementById('pPrice').value.trim(); if(v===''||v==='38'||v==='50000'||v==='35') document.getElementById('pPrice').value=defPriceCur(cur); updatePPriceLabel(); };
 document.getElementById('patCancel').onclick=()=>{if(addingFromSession){addingFromSession=false;const sel=document.getElementById('fPatient');if(sel)sel.value=prevPatientVal;}hide('patScrim');};
 document.getElementById('patDelete').onclick=deletePatient;
@@ -1353,7 +1362,7 @@ function remindWhatsApp(){
   if(!p){ alert('Elegí un paciente primero.'); return; }
   let phone=(p.phone||'').trim();
   if(!phone){
-    phone=prompt('¿Cuál es el WhatsApp de '+p.name+'?\n\nCon código de país, sin espacios ni signos.\nEj: 5493814809398','');
+    phone=prompt('¿Cuál es el WhatsApp de '+p.name+'?\n\nEl + y el código de país ya vienen puestos según el país del paciente; cambialos si el número es de otro país.',dialFor(p.country)||'+');
     if(phone==null) return;
     phone=(phone||'').trim(); if(!phone) return;
     p.phone=phone; saveAll();
@@ -1362,7 +1371,7 @@ function remindWhatsApp(){
   if(digits.length<8){ alert('El teléfono no parece válido. Revisalo en la ficha del paciente.'); return; }
   const tmpl=(settings.reminderMsg&&settings.reminderMsg.trim())||DEFAULT_REMIND;
   const nom=(p.name||'').replace(/\s*\(ejemplo\)\s*/i,'').trim();
-  const msg=tmpl.replace(/\{nombre\}/g,nom).replace(/\{fecha\}/g,remindDateLabel(s.date)).replace(/\{hora\}/g,fmtTime(s.time));
+  const msg=tmpl.replace(/\{nombre\}/g,nom).replace(/\{fecha\}/g,remindDateLabel(s.date)).replace(/\{hora\}/g,s.time+' hs');
   window.open('https://wa.me/'+digits+'?text='+encodeURIComponent(msg),'_blank');
 }
 { const sr=document.getElementById('sessRemind'); if(sr) sr.onclick=remindWhatsApp; }
