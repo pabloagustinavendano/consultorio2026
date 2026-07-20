@@ -398,7 +398,7 @@ html[data-theme="dark"] .sw span{background:var(--line)}
     <div id="fbErr" style="color:var(--c-tocollect);font-size:13px;display:none;margin-bottom:8px"></div>
     <div style="margin-bottom:12px;text-align:right"><button class="link" id="fbForgot">¿Olvidaste tu contraseña?</button></div>
     <div class="actions" style="gap:8px"><button class="btn btn-soft" id="fbSignup" style="flex:1">Crear cuenta</button><button class="btn btn-primary" id="fbSignin" style="flex:1">Entrar</button></div>
-    <p class="hint" style="text-align:center;margin-top:14px;font-size:12.5px">¿Primera vez? Cree su cuenta y pruebe 7 días gratis, sin tarjeta.</p>
+    <p class="hint" style="text-align:center;margin-top:14px;font-size:12.5px">¿Primera vez? Cree su cuenta y pruebe 14 días gratis, sin tarjeta.</p>
   </div>
   
   </div>
@@ -1239,7 +1239,7 @@ async function pushCloud(){ if(!cloud.user||!cloud.db||!cloud.ready) return;
   catch(e){ updateSyncBadge('error'); } }
 /* ===== Suscripción / portón ===== */
 const COURTESY_EMAILS=['pabloagustinavendano@gmail.com'];
-const TRIAL_DAYS=7;
+const TRIAL_DAYS=14;
 function trialInfo(){ const u=cloud.user; if(!u||!u.metadata||!u.metadata.creationTime) return {active:false,left:0};
   const created=Date.parse(u.metadata.creationTime); if(!created) return {active:false,left:0};
   const ms=created+TRIAL_DAYS*86400000-Date.now();
