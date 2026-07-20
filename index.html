@@ -81,10 +81,10 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
   .tp.on{border-color:var(--brand);color:var(--brand);background:var(--brand-soft)}
   .themehint{text-align:center;font-size:12px;color:var(--muted);margin:0 0 14px}
 
-  .device{position:relative;max-width:340px;margin:0 auto;background:#111317;border-radius:46px;padding:11px;box-shadow:0 34px 60px -30px rgba(0,0,0,.55),0 0 0 2px #2a2c33,inset 0 0 0 2px #000}
-  .device::before{content:"";position:absolute;top:11px;left:50%;transform:translateX(-50%);width:116px;height:24px;background:#111317;border-radius:0 0 16px 16px;z-index:4}
-  .device::after{content:"";position:absolute;bottom:17px;left:50%;transform:translateX(-50%);width:104px;height:4px;background:rgba(255,255,255,.5);border-radius:3px;z-index:4}
-  .phone{background:var(--bg);border:none;border-radius:36px;padding:34px 12px 24px;box-shadow:none;color:var(--ink);transition:background .35s,border-color .35s,color .35s;overflow:hidden}
+  .device{position:relative;max-width:330px;margin:0 auto;background:#111317;border-radius:40px;padding:6px;box-shadow:0 30px 56px -30px rgba(0,0,0,.5),0 0 0 1.5px #2a2c33}
+  .device::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:100px;height:18px;background:#111317;border-radius:0 0 13px 13px;z-index:4}
+  .device::after{content:"";position:absolute;bottom:11px;left:50%;transform:translateX(-50%);width:98px;height:4px;background:rgba(255,255,255,.45);border-radius:3px;z-index:4}
+  .phone{background:var(--bg);border:none;border-radius:35px;padding:26px 10px 18px;box-shadow:none;color:var(--ink);transition:background .35s,border-color .35s,color .35s;overflow:hidden}
   .ph-top{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 12px}
   .ph-brand{font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:var(--ink)}
   .ph-icons{display:flex;gap:6px}
@@ -97,7 +97,8 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
   .ph-tabs{display:flex;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:3px;margin:0 2px 12px}
   .pt2{flex:1;border:none;background:transparent;color:var(--muted);font:700 14px 'Karla',sans-serif;padding:8px 0;border-radius:9px;cursor:pointer;transition:.15s}
   .pt2.on{background:var(--brand);color:#fff}
-  .ph-view{padding:0 2px}
+  .ph-view{padding:0 2px;height:328px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+  .ph-view::-webkit-scrollbar{display:none}
   .ph-view[hidden]{display:none}
   .ph-day{display:flex;align-items:baseline;gap:8px;font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin:0 2px 10px;color:var(--ink)}
   .ph-day small{font-family:'Karla',sans-serif;font-weight:400;font-size:12.5px;color:var(--muted)}
@@ -173,22 +174,25 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
   .wacopy li{padding-left:28px;position:relative;color:var(--ink);font-size:15.5px}
   .wacopy li::before{content:"";position:absolute;left:0;top:3px;width:17px;height:17px;border-radius:50%;background:#25D366}
   .wacopy li::after{content:"";position:absolute;left:5px;top:8px;width:6px;height:3px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg)}
-  .waphone{background:#0b141a;border-radius:30px;padding:8px;box-shadow:0 26px 54px -26px rgba(0,0,0,.6),0 0 0 2px #23252b;max-width:320px;margin:0 auto;width:100%}
+  .waphone{background:#0b141a;border-radius:26px;padding:5px;box-shadow:0 24px 50px -26px rgba(0,0,0,.6),0 0 0 1.5px #23252b;max-width:318px;margin:0 auto;width:100%}
   .wahead{display:flex;align-items:center;gap:8px;background:#075E54;color:#fff;border-radius:22px 22px 0 0;padding:11px 12px}
   .waback{font-size:20px;line-height:1;opacity:.9;margin:0 -2px 0 0}
-  .waav{flex:none;width:32px;height:32px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+  .waav{flex:none;width:33px;height:33px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
   .wan{flex:1;min-width:0}
   .wahead b{font-size:14.5px;display:block;line-height:1.15}
   .wahead small{font-size:11.5px;opacity:.85}
   .waicons{display:flex;gap:16px;align-items:center;opacity:.92}
   .waicons svg{width:18px;height:18px;fill:#fff;display:block}
-  .wabody{background:#e6ddd4;background-image:radial-gradient(rgba(0,0,0,.03) 1px,transparent 1px);background-size:14px 14px;padding:14px 10px 10px;min-height:158px;display:flex;flex-direction:column;gap:9px}
-  .wadate{align-self:center;background:#d9ecf0;color:#4c6b72;font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:3px 12px;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.05)}
-  .wabubble{align-self:flex-end;max-width:85%;background:#dcf8c6;color:#111b1e;border-radius:10px 10px 2px 10px;padding:8px 10px 6px;font-size:14px;line-height:1.45;box-shadow:0 1px .5px rgba(0,0,0,.18);position:relative;margin-top:auto}
-  .wabubble::after{content:"";position:absolute;right:-6px;bottom:0;width:0;height:0;border:7px solid transparent;border-left-color:#dcf8c6;border-bottom-color:#dcf8c6}
-  .watime{display:block;text-align:right;font-size:10.5px;color:#667781;margin-top:2px}
+  .wabody{background:#e4dcd3;background-image:radial-gradient(rgba(0,0,0,.028) 1px,transparent 1px);background-size:15px 15px;padding:14px 10px 12px;min-height:250px;display:flex;flex-direction:column;gap:8px}
+  .wadate{align-self:center;background:#d9ecf0;color:#4c6b72;font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:3px 12px;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.05);margin-bottom:2px}
+  .wabubble{max-width:86%;padding:7px 9px 5px;font-size:14px;line-height:1.45;box-shadow:0 1px .6px rgba(0,0,0,.16);position:relative;color:#111b1e}
+  .wabubble.out{align-self:flex-end;background:#d9fdd3;border-radius:8px 3px 8px 8px}
+  .wabubble.out::after{content:"";position:absolute;top:0;right:-5px;width:7px;height:7px;background:#d9fdd3;clip-path:polygon(0 0,100% 0,0 100%)}
+  .wabubble.in{align-self:flex-start;background:#fff;border-radius:3px 8px 8px 8px}
+  .wabubble.in::after{content:"";position:absolute;top:0;left:-5px;width:7px;height:7px;background:#fff;clip-path:polygon(100% 0,100% 100%,0 0)}
+  .watime{display:block;text-align:right;font-size:10px;color:#667781;margin-top:2px}
   .watick{color:#53bdeb;font-weight:700;letter-spacing:-1px}
-  .wafoot{display:flex;align-items:center;gap:8px;background:#0b141a;padding:8px;border-radius:0 0 22px 22px}
+  .wafoot{display:flex;align-items:center;gap:8px;background:#0b141a;padding:7px 8px;border-radius:0 0 22px 22px}
   .wainput{flex:1;background:#1f2c33;color:#8a99a0;border-radius:18px;padding:8px 14px;font-size:12.5px}
   .wamic{flex:none;width:34px;height:34px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center}
   .wamic svg{width:16px;height:16px;fill:#fff}
@@ -382,7 +386,8 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
         </div>
         <div class="wabody">
           <span class="wadate">HOY</span>
-          <div class="wabubble">¡Hola Ana! Te recuerdo tu sesión del martes 22/07 a las 15:00 hs. Cualquier cosa, avisame. ¡Saludos!<span class="watime">15:04 <span class="watick">✓✓</span></span></div>
+          <div class="wabubble out">¡Hola Ana! Te recuerdo tu sesión del martes 22/07 a las 15:00 hs. Cualquier cosa, avisame. ¡Saludos!<span class="watime">15:04 <span class="watick">✓✓</span></span></div>
+          <div class="wabubble in">¡Gracias! Ahí estaré 🙌<span class="watime">15:06</span></div>
         </div>
         <div class="wafoot"><span class="wainput">Mensaje</span><span class="wamic"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-2.1A7 7 0 0 0 19 12z"/></svg></span></div>
       </div>
