@@ -464,7 +464,7 @@ html[data-theme="dark"] .sw span{background:var(--line)}
 
   <div class="setsec">Avanzado</div>
   <div class="setgroup">
-  <div class="setrow"><span>Contacto</span><a class="link" id="contactMail" style="text-decoration:none" href="mailto:veritasincaritateinstitute@gmail.com?subject=Consultorio%20App">Escribinos</a></div>
+  <div class="setrow"><span>Contacto</span><button class="link" id="contactMail">Escribinos</button></div>
   <div class="setrow"><span>Reiniciar datos</span><button class="link danger" id="resetData">Reiniciar</button></div>
   <div class="setrow"><span>Eliminar mi cuenta</span><button class="link danger" id="acctDelete">Eliminar</button></div>
   </div>
@@ -1506,6 +1506,7 @@ function openInstall(){
 { const io=document.getElementById('installOpen'); if(io) io.onclick=openInstall; }
 if(isStandalonePWA()){ const si=document.getElementById('secInstall'), gi=document.getElementById('grpInstall'); if(si)si.style.display='none'; if(gi)gi.style.display='none'; }
 document.getElementById('openRestore').onclick=openRestore;
+{ const cm=document.getElementById('contactMail'); if(cm) cm.onclick=()=>{ window.location.href='mailto:veritasincaritateinstitute@gmail.com?subject=Consultorio%20App'; }; }
 document.getElementById('restoreClose').onclick=()=>hide('restoreScrim');
 document.getElementById('acctPass').onclick=acctChangePass;
 document.getElementById('acctManage').onclick=acctManageSub;
