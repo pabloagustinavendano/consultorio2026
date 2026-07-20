@@ -193,6 +193,11 @@ h2{margin:0;font-weight:600}
 #sessDupRow{margin-top:10px}
 .btn-dellink{display:block;width:100%;background:none;border:none;color:#c0392b;font-weight:600;font-size:14px;padding:10px;margin-top:4px;cursor:pointer;font-family:inherit;border-radius:8px}
 .btn-dellink:active{background:var(--cs-tocollect)}
+#billStats{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+#billStats.on{display:grid!important}
+.bstat{background:var(--brand-soft);border-radius:12px;padding:12px 10px;text-align:center}
+.bstat b{display:block;font-family:'Fraunces',serif;font-size:26px;color:var(--brand);line-height:1}
+.bstat small{display:block;font-size:12px;color:var(--muted);margin-top:4px}
 .btn-soft{background:var(--brand-soft);color:var(--brand);flex:none;min-width:0;padding:13px 16px}
 .sw{position:relative;display:inline-block;width:42px;height:24px;flex:none}
 .sw input{opacity:0;width:0;height:0}
@@ -496,8 +501,9 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   <div style="text-align:center;padding-top:6px"><button class="link" id="restoreClose">Cerrar</button></div>
 </div></div>
 <div class="scrim" id="billScrim" style="z-index:90"><div class="sheet">
-  <h2>Tu suscripción</h2>
-  <p class="hint" style="margin-bottom:14px">Su prueba gratuita terminó. Active su cuenta para seguir usando el consultorio. El cobro es en dólares (US$ 4/mes); su tarjeta lo convierte a su moneda. Cancele cuando quiera.</p>
+  <h2 id="billTitle">Tu suscripción</h2>
+  <div id="billStats" style="display:none"></div>
+  <p class="hint" id="billHint" style="margin-bottom:14px">Su prueba gratuita terminó. Active su cuenta para seguir usando el consultorio.</p>
   <div class="actions" style="flex-direction:column;gap:10px;align-items:stretch">
     <button class="btn btn-primary" id="billStripe">Pagar USD 4 / mes</button>
     <button class="btn btn-soft" id="billMp" style="display:none">Pagar $4.000 ARS / mes (Mercado Pago)</button>
@@ -1250,23 +1256,40 @@ function trialInfo(){ const u=cloud.user; if(!u||!u.metadata||!u.metadata.creati
   return {active:ms>0, left:Math.max(0,Math.ceil(ms/86400000))}; }
 let billState={cortesia:false,stripe:false,mp:false,known:false}, billEntUnsub=null, billSubUnsub=null;
 function billGrant(){ return billState.cortesia||billState.stripe||billState.mp||trialInfo().active; }
+function fillBillSheet(){
+  const t=trialInfo(), np=patients.length, ns=sessions.length;
+  const title=document.getElementById('billTitle'), hint=document.getElementById('billHint'), stats=document.getElementById('billStats');
+  if(stats){
+    if(np>0||ns>0){ stats.className='on'; stats.innerHTML='<div class="bstat"><b>'+np+'</b><small>paciente'+(np===1?'':'s')+'</small></div><div class="bstat"><b>'+ns+'</b><small>turno'+(ns===1?'':'s')+' cargado'+(ns===1?'':'s')+'</small></div>'; }
+    else { stats.className=''; stats.style.display='none'; }
+  }
+  if(t.active){
+    if(title) title.textContent='Activ\u00e1 tu cuenta';
+    if(hint) hint.innerHTML='Te quedan <b>'+t.left+' d\u00eda'+(t.left===1?'':'s')+'</b> de prueba. Cuando quieras, segu\u00ed por <b>US$ 4 al mes</b> \u2014menos que un caf\u00e9\u2014 con tu agenda y tus cobros siempre en orden. Cancel\u00e1s cuando quieras.';
+  } else {
+    if(title) title.textContent='Activ\u00e1 para seguir us\u00e1ndola';
+    if(hint) hint.innerHTML='Por <b>US$ 4 al mes</b> \u2014menos que un caf\u00e9\u2014 ten\u00e9s tu agenda, tus cobros y tus recordatorios ordenados todo el mes.';
+  }
+}
+function openBillSheet(){ fillBillSheet(); show('billScrim'); }
 function applyGate(){
   const u=cloud.user;
   if(!u){ hide('billScrim'); return; }
   if(COURTESY_EMAILS.includes((u.email||'').toLowerCase())) billState.cortesia=true;
   if(billGrant()) hide('billScrim');
-  else show('billScrim');
+  else openBillSheet();
   trialBanner();
 }
 function trialBanner(){
   let el=document.getElementById('trialBar');
   const t=trialInfo(), show_=cloud.user&&!billState.cortesia&&!billState.stripe&&!billState.mp&&t.active;
   if(!show_){ if(el) el.remove(); return; }
-  if(!el){ el=document.createElement('div'); el.id='trialBar';
-    el.style.cssText='background:var(--brand-soft);color:var(--brand);font:600 12.5px/1.5 system-ui,sans-serif;text-align:center;padding:7px 10px;cursor:pointer';
-    el.onclick=()=>show('billScrim');
-    document.body.insertBefore(el, document.body.firstChild); }
-  el.textContent='Prueba gratis \u00b7 '+(t.left===1?'\u00faltimo d\u00eda':'quedan '+t.left+' d\u00edas')+' \u2014 toque para suscribirse';
+  if(!el){ el=document.createElement('div'); el.id='trialBar'; el.onclick=openBillSheet; document.body.insertBefore(el, document.body.firstChild); }
+  const urgent=t.left<=3;
+  el.style.cssText='background:'+(urgent?'#c0392b':'var(--brand-soft)')+';color:'+(urgent?'#fff':'var(--brand)')+';font:600 12.5px/1.5 system-ui,sans-serif;text-align:center;padding:7px 10px;cursor:pointer';
+  el.textContent = urgent
+    ? '\u26a0\ufe0f '+(t.left===1?'\u00daltimo d\u00eda de prueba':'Te quedan '+t.left+' d\u00edas de prueba')+' \u2014 activ\u00e1 tu cuenta para no cortar'
+    : 'Prueba gratis \u00b7 quedan '+t.left+' d\u00edas \u2014 toque para suscribirse';
 }
 function billClear(){
   try{ if(billEntUnsub)billEntUnsub(); }catch(e){}
