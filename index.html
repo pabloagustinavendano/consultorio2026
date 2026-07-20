@@ -81,7 +81,10 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
   .tp.on{border-color:var(--brand);color:var(--brand);background:var(--brand-soft)}
   .themehint{text-align:center;font-size:12px;color:var(--muted);margin:0 0 14px}
 
-  .phone{background:var(--bg);border:1px solid var(--line);border-radius:28px;padding:12px;box-shadow:var(--shadow);color:var(--ink);transition:background .35s,border-color .35s,color .35s;overflow:hidden}
+  .device{position:relative;max-width:340px;margin:0 auto;background:#111317;border-radius:46px;padding:11px;box-shadow:0 34px 60px -30px rgba(0,0,0,.55),0 0 0 2px #2a2c33,inset 0 0 0 2px #000}
+  .device::before{content:"";position:absolute;top:11px;left:50%;transform:translateX(-50%);width:116px;height:24px;background:#111317;border-radius:0 0 16px 16px;z-index:4}
+  .device::after{content:"";position:absolute;bottom:17px;left:50%;transform:translateX(-50%);width:104px;height:4px;background:rgba(255,255,255,.5);border-radius:3px;z-index:4}
+  .phone{background:var(--bg);border:none;border-radius:36px;padding:34px 12px 24px;box-shadow:none;color:var(--ink);transition:background .35s,border-color .35s,color .35s;overflow:hidden}
   .ph-top{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 12px}
   .ph-brand{font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:var(--ink)}
   .ph-icons{display:flex;gap:6px}
@@ -161,6 +164,35 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
   .cal li::before{content:"→";position:absolute;left:0;color:var(--brand);font-weight:700}
   .cal .optnote{margin:24px 0 0;padding:16px 18px;background:color-mix(in srgb,var(--brand) 10%,var(--paper));border:1px solid color-mix(in srgb,var(--brand) 18%,var(--line));border-radius:14px;color:var(--ink);font-size:15px}
   .cal .optnote b{color:var(--brand)}
+  /* recordatorios whatsapp */
+  .warow{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;background:var(--brand-soft);border:1px solid color-mix(in srgb,var(--brand) 22%,var(--line));border-radius:24px;padding:40px 36px;margin:8px 0;box-shadow:0 14px 34px -28px rgba(31,77,67,.4);transition:background .35s,border-color .35s}
+  .wacopy .eyebrow{color:var(--brand)}
+  .wacopy h2{color:var(--ink);margin-bottom:12px}
+  .wacopy p{color:var(--muted);max-width:52ch}
+  .wacopy ul{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:12px}
+  .wacopy li{padding-left:28px;position:relative;color:var(--ink);font-size:15.5px}
+  .wacopy li::before{content:"";position:absolute;left:0;top:3px;width:17px;height:17px;border-radius:50%;background:#25D366}
+  .wacopy li::after{content:"";position:absolute;left:5px;top:8px;width:6px;height:3px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg)}
+  .waphone{background:#0b141a;border-radius:30px;padding:8px;box-shadow:0 26px 54px -26px rgba(0,0,0,.6),0 0 0 2px #23252b;max-width:320px;margin:0 auto;width:100%}
+  .wahead{display:flex;align-items:center;gap:8px;background:#075E54;color:#fff;border-radius:22px 22px 0 0;padding:11px 12px}
+  .waback{font-size:20px;line-height:1;opacity:.9;margin:0 -2px 0 0}
+  .waav{flex:none;width:32px;height:32px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+  .wan{flex:1;min-width:0}
+  .wahead b{font-size:14.5px;display:block;line-height:1.15}
+  .wahead small{font-size:11.5px;opacity:.85}
+  .waicons{display:flex;gap:16px;align-items:center;opacity:.92}
+  .waicons svg{width:18px;height:18px;fill:#fff;display:block}
+  .wabody{background:#e6ddd4;background-image:radial-gradient(rgba(0,0,0,.03) 1px,transparent 1px);background-size:14px 14px;padding:14px 10px 10px;min-height:158px;display:flex;flex-direction:column;gap:9px}
+  .wadate{align-self:center;background:#d9ecf0;color:#4c6b72;font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:3px 12px;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.05)}
+  .wabubble{align-self:flex-end;max-width:85%;background:#dcf8c6;color:#111b1e;border-radius:10px 10px 2px 10px;padding:8px 10px 6px;font-size:14px;line-height:1.45;box-shadow:0 1px .5px rgba(0,0,0,.18);position:relative;margin-top:auto}
+  .wabubble::after{content:"";position:absolute;right:-6px;bottom:0;width:0;height:0;border:7px solid transparent;border-left-color:#dcf8c6;border-bottom-color:#dcf8c6}
+  .watime{display:block;text-align:right;font-size:10.5px;color:#667781;margin-top:2px}
+  .watick{color:#53bdeb;font-weight:700;letter-spacing:-1px}
+  .wafoot{display:flex;align-items:center;gap:8px;background:#0b141a;padding:8px;border-radius:0 0 22px 22px}
+  .wainput{flex:1;background:#1f2c33;color:#8a99a0;border-radius:18px;padding:8px 14px;font-size:12.5px}
+  .wamic{flex:none;width:34px;height:34px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center}
+  .wamic svg{width:16px;height:16px;fill:#fff}
+@media (max-width:760px){ .warow{grid-template-columns:1fr;gap:26px;padding:32px 22px} .wacopy p{max-width:none} }
 
   .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px}
   .comp{border-radius:var(--radius);padding:24px 22px;border:1px solid var(--line);text-align:left;background:var(--paper)}
@@ -255,7 +287,7 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
           <button class="tp" data-t="t-dark">Oscuro</button>
         </div>
         <p class="themehint">Elige un tema — cambia toda la web, como en la app</p>
-        <div class="phone" id="phone">
+        <div class="device"><div class="phone" id="phone">
           <div class="ph-top">
             <span class="ph-brand">Consultorio App</span>
             <span class="ph-icons"><b>👥</b><b>🎨</b><b>⚙</b></span>
@@ -296,7 +328,7 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
             <div class="ph-day" id="phMonth">Mes</div>
             <div class="mgrid" id="phGrid"></div>
           </div>
-        </div>
+        </div></div>
         <p class="taphint" style="color:var(--muted)">Cambia de <b>vista</b>: Día · Semana · Mes</p>
       </div>
     </header>
@@ -315,39 +347,45 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
 </div>
 
 <div class="wrap">
-  <section id="que" class="center">
-    <div class="eyebrow reveal">El problema</div>
+  <section id="como" class="center">
+    <div class="eyebrow reveal">Cómo funciona</div>
     <h2 class="reveal">Deja el Excel y los papelitos</h2>
-    <p class="sub reveal">Llevar la cuenta de quién vino, quién pagó y cuánto te deben termina en una planilla que nadie quiere abrir —o peor, en la cabeza—. Consultorio App lo resuelve en tres toques, sin cambiar tu forma de trabajar.</p>
-    <div class="cards" style="text-align:left">
-      <div class="card reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
-        <h3>La agenda de siempre</h3>
-        <p>Mira tu día, tu semana o tu mes. Arrastra un turno para moverlo. Duplica una sesión a la semana o cada quince días, si el paciente es quincenal.</p>
-      </div>
-      <div class="card reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div>
-        <h3>El cobro, al día</h3>
-        <p>Cada sesión pasa de agendada a sin pagar y a pagada con un toque. Cada paciente puede tener su precio y su moneda: dólares, pesos o euros, sin mezclarse.</p>
-      </div>
-      <div class="card reveal">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></div>
-        <h3>El informe del mes</h3>
-        <p>Eliges el mes y ves qué cobraste y quién te debe. Listo para guardar en PDF. Los meses viejos quedan ahí, tal como los cerraste.</p>
-      </div>
+    <p class="sub reveal">Quién vino, quién pagó, cuánto te deben: todo termina en una planilla que nadie quiere abrir. Consultorio App lo ordena en tres pasos, sin cambiar tu forma de trabajar.</p>
+    <div class="steps" style="text-align:left">
+      <div class="step reveal"><div class="num"></div><h3>Agenda el turno</h3><p>Tu día, tu semana o tu mes. Arrastra un turno para moverlo y duplícalo si el paciente es semanal o quincenal. Si usas Google Calendar, aparece ahí también, solo.</p></div>
+      <div class="step reveal"><div class="num"></div><h3>Marca el pago</h3><p>Un toque y la sesión pasa de agendada a sin pagar y a pagada. Nunca más "¿este me pagó?". Cada paciente con su precio y su moneda —dólares, pesos o euros—, sin mezclarse.</p></div>
+      <div class="step reveal"><div class="num"></div><h3>Cierra el mes</h3><p>Eliges el mes y ves cuánto cobraste y quién te debe. Listo para guardar en PDF, en dos minutos y sin sumar a mano.</p></div>
     </div>
   </section>
 
-  <hr class="rule">
-
-  <section id="como" class="center">
-    <div class="eyebrow reveal">Cómo funciona</div>
-    <h2 class="reveal">Tres pasos y listo</h2>
-    <p class="sub reveal">No hay curva de aprendizaje. Si sabes usar un calendario, ya sabes usar Consultorio App.</p>
-    <div class="steps" style="text-align:left">
-      <div class="step reveal"><div class="num"></div><h3>Agenda el turno</h3><p>Cargas al paciente, el día y la hora. Si usas Google Calendar, aparece ahí también, automáticamente.</p></div>
-      <div class="step reveal"><div class="num"></div><h3>Marca el pago</h3><p>Cuando te pagan, un toque cambia el estado de la sesión. Nunca más "¿este me pagó o no?".</p></div>
-      <div class="step reveal"><div class="num"></div><h3>Cierra el mes</h3><p>El informe te dice cuánto cobraste y quién te debe, por moneda. En dos minutos, sin sumar a mano.</p></div>
+  <section id="recordatorios">
+    <div class="warow reveal">
+      <div class="wacopy">
+        <div class="eyebrow">Recordatorios</div>
+        <h2>Menos ausencias, sin perseguir a nadie</h2>
+        <p>Un paciente que se olvida es una hora perdida. Desde cada turno, un toque abre WhatsApp con el recordatorio ya escrito: solo lo envías. El mensaje lo eliges tú.</p>
+        <ul>
+          <li>Sale con el nombre, el día y la hora completados solos.</li>
+          <li>Se envía desde tu propio WhatsApp, con tu número.</li>
+          <li>Escribes el texto una vez y queda listo para todos.</li>
+        </ul>
+      </div>
+      <div class="waphone" aria-hidden="true">
+        <div class="wahead">
+          <span class="waback">‹</span>
+          <span class="waav">A</span>
+          <span class="wan"><b>Ana P.</b><small>en línea</small></span>
+          <span class="waicons">
+            <svg viewBox="0 0 24 24"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .7-.2 1z"/></svg>
+          </span>
+        </div>
+        <div class="wabody">
+          <span class="wadate">HOY</span>
+          <div class="wabubble">¡Hola Ana! Te recuerdo tu sesión del martes 22/07 a las 15:00 hs. Cualquier cosa, avisame. ¡Saludos!<span class="watime">15:04 <span class="watick">✓✓</span></span></div>
+        </div>
+        <div class="wafoot"><span class="wainput">Mensaje</span><span class="wamic"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-2.1A7 7 0 0 0 19 12z"/></svg></span></div>
+      </div>
     </div>
   </section>
 
@@ -373,20 +411,18 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
         <h3>Con la planilla</h3>
         <ul>
           <li><b>✕</b>Buscas en tres lados quién te debe</li>
-          <li><b>✕</b>Copias fórmulas que se rompen</li>
           <li><b>✕</b>Mezclas pesos, dólares y euros a ojo</li>
+          <li><b>✕</b>Los pacientes se olvidan del turno</li>
           <li><b>✕</b>El cierre de mes te lleva una tarde</li>
-          <li><b>✕</b>Si pierdes el archivo, perdiste todo</li>
         </ul>
       </div>
       <div class="comp good reveal">
         <h3>Con Consultorio App</h3>
         <ul>
           <li><b>✓</b>Ves de un vistazo quién pagó y quién no</li>
-          <li><b>✓</b>Un toque cambia el estado del cobro</li>
           <li><b>✓</b>Cada moneda se cuenta por separado</li>
+          <li><b>✓</b>Les recuerdas el turno por WhatsApp</li>
           <li><b>✓</b>El informe del mes sale en dos minutos</li>
-          <li><b>✓</b>Copias de seguridad automáticas en la nube</li>
         </ul>
       </div>
     </div>
@@ -430,9 +466,10 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
       <p class="price-coffee">Menos que un café por mes.</p>
       <ul class="price-list">
         <li>Pacientes y turnos sin límite</li>
+        <li>Recordatorios por WhatsApp a tus pacientes</li>
         <li>Sincronización opcional con Google Calendar</li>
         <li>Informe mensual de cobros y deudas</li>
-        <li>Multi-moneda (US$, ARS, €) sin convertir</li>
+        <li>Multi-moneda (dólar, peso, euro) sin convertir</li>
         <li>Temas y modo oscuro</li>
         <li>Copias de seguridad automáticas</li>
         <li>En la computadora y en el celular</li>
@@ -455,6 +492,7 @@ fbq('track','ViewContent',{content_name:'Landing Consultorio App'});
       <details class="reveal"><summary>¿Necesito usar Google Calendar?</summary><p>No. Consultorio App funciona por su cuenta, sin conectar nada. Si además usas Google Calendar, puedes conectarla y trabajan juntas —pero es totalmente opcional—.</p></details>
       <details class="reveal"><summary>¿Necesito tarjeta de crédito para probar?</summary><p>No. Los 7 días son gratis y sin tarjeta. Recién si decides seguir, cargas el pago. Cancelas cuando quieras, sin llamados ni vueltas.</p></details>
       <details class="reveal"><summary>¿Se instala como una app?</summary><p>Sí, en el celular y en la computadora. Se agrega a la pantalla de inicio (o al escritorio) y se abre como cualquier otra app, con su ícono y a pantalla completa. No hace falta descargarla de ninguna tienda. Tienes los pasos por dispositivo más arriba, en <a href="#instalar">"Instálala como una app"</a>.</p></details>
+      <details class="reveal"><summary>¿Cómo funcionan los recordatorios por WhatsApp?</summary><p>Desde cada turno tocas "Recordar por WhatsApp" y se abre el chat con el mensaje ya escrito —con el nombre, el día y la hora—. Solo lo envías. Sale desde tu propio WhatsApp, con tu número, y el texto lo editas a tu gusto. Es manual a propósito: tú decides a quién y cuándo.</p></details>
       <details class="reveal"><summary>¿Puedo cobrar en varias monedas?</summary><p>Sí. Cada paciente tiene su moneda y su precio. Los informes muestran cada moneda por separado, sin convertir nada ni inventar cotizaciones.</p></details>
       <details class="reveal"><summary>¿Puedo elegir cómo se ve?</summary><p>Sí. Puedes elegir entre varios temas y activar el modo oscuro, para que la app se sienta cómoda a cualquier hora del día.</p></details>
       <details class="reveal"><summary>¿Y si atiendo con otros colegas?</summary><p>Cada profesional tiene su cuenta y ve solamente sus propios pacientes. Si además rindes lo cobrado a un equipo, puedes activar el modo liquidación en los ajustes.</p></details>
