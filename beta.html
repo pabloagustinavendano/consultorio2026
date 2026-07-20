@@ -192,6 +192,13 @@ h2{margin:0;font-weight:600}
 .bstat{background:var(--brand-soft);border-radius:12px;padding:12px 10px;text-align:center}
 .bstat b{display:block;font-family:'Fraunces',serif;font-size:26px;color:var(--brand);line-height:1}
 .bstat small{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+.planopt{position:relative;display:flex;flex-direction:column;gap:1px;align-items:flex-start;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;cursor:pointer;color:var(--ink);font-family:inherit}
+.planopt b{font-size:14px;font-weight:700}
+.planopt span{font-size:12.5px;color:var(--muted)}
+.planopt em{font-size:11px;font-weight:700;color:var(--brand);font-style:normal;margin-top:2px}
+.planopt.on{border-color:var(--brand);background:var(--brand);color:#fff}
+.planopt.on span{color:rgba(255,255,255,.88)}
+.planopt.on em{color:#fff}
 .btn-soft{background:var(--brand-soft);color:var(--brand);flex:none;min-width:0;padding:13px 16px}
 .sw{position:relative;display:inline-block;width:42px;height:24px;flex:none}
 .sw input{opacity:0;width:0;height:0}
@@ -499,6 +506,10 @@ html[data-theme="dark"] .sw span{background:var(--line)}
   <h2 id="billTitle">Tu suscripción</h2>
   <div id="billStats" style="display:none"></div>
   <p class="hint" id="billHint" style="margin-bottom:14px">Su prueba gratuita terminó. Active su cuenta para seguir usando el consultorio.</p>
+  <div id="planPick" style="display:none;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+    <button type="button" class="planopt" data-plan="month"><b>Mensual</b><span>US$ 4 / mes</span></button>
+    <button type="button" class="planopt" data-plan="year"><b>Anual</b><span>US$ 40 / año</span><em>2 meses gratis</em></button>
+  </div>
   <div class="actions" style="flex-direction:column;gap:10px;align-items:stretch">
     <button class="btn btn-primary" id="billStripe">Pagar USD 4 / mes</button>
     <button class="btn btn-soft" id="billMp" style="display:none">Pagar $4.000 ARS / mes (Mercado Pago)</button>
@@ -1252,8 +1263,29 @@ function trialInfo(){ const u=cloud.user; if(!u||!u.metadata||!u.metadata.creati
   return {active:ms>0, left:Math.max(0,Math.ceil(ms/86400000))}; }
 let billState={cortesia:false,stripe:false,mp:false,known:false}, billEntUnsub=null, billSubUnsub=null;
 function billGrant(){ return billState.cortesia||billState.stripe||billState.mp||trialInfo().active; }
+let PRICES={month:null,year:null}, plan='month';
+async function loadPrices(){
+  if(PRICES.month||PRICES.year) return PRICES;
+  try{
+    const prods=await cloud.db.collection('products').where('active','==',true).get();
+    for(const p of prods.docs){
+      const prices=await p.ref.collection('prices').where('active','==',true).get();
+      prices.docs.forEach(d=>{ const x=d.data()||{}; if(x.type==='recurring'){ if(x.interval==='year') PRICES.year=d.id; else if(x.interval==='month') PRICES.month=d.id; } });
+    }
+  }catch(e){}
+  if(!PRICES.year) PRICES.year='price_1TvOCLDkkBpM0Vav8FhnlN0W';
+  return PRICES;
+}
+function planLabelBtn(){ return plan==='year' ? 'Pagar US$ 40 / año' : 'Pagar US$ 4 / mes'; }
+function renderPlanPick(){
+  const pick=document.getElementById('planPick'); if(!pick) return;
+  pick.style.display=(PRICES.month&&PRICES.year)?'grid':'none';
+  pick.querySelectorAll('.planopt').forEach(b=>b.classList.toggle('on', b.dataset.plan===plan));
+  const bs=document.getElementById('billStripe'); if(bs&&!bs.disabled) bs.textContent=planLabelBtn();
+}
 function fillBillSheet(){
   const t=trialInfo(), np=patients.length, ns=sessions.length;
+  loadPrices().then(renderPlanPick);
   const title=document.getElementById('billTitle'), hint=document.getElementById('billHint'), stats=document.getElementById('billStats');
   if(stats){
     if(np>0||ns>0){ stats.className='on'; stats.innerHTML='<div class="bstat"><b>'+np+'</b><small>paciente'+(np===1?'':'s')+'</small></div><div class="bstat"><b>'+ns+'</b><small>turno'+(ns===1?'':'s')+' cargado'+(ns===1?'':'s')+'</small></div>'; }
@@ -1323,13 +1355,8 @@ async function billStartStripe(){
   const errEl=document.getElementById('billErr'); errEl.style.display='none';
   const btn=document.getElementById('billStripe'), old=btn.textContent; btn.disabled=true; btn.textContent='Abriendo el pago\u2026';
   try{
-    let priceId=null;
-    const prods=await cloud.db.collection('products').where('active','==',true).get();
-    for(const p of prods.docs){
-      const prices=await p.ref.collection('prices').where('active','==',true).get();
-      const rec=prices.docs.find(d=>((d.data()||{}).type==='recurring'))||prices.docs[0];
-      if(rec){ priceId=rec.id; break; }
-    }
+    await loadPrices();
+    let priceId = PRICES[plan] || PRICES.month || PRICES.year;
     if(!priceId) throw new Error('El plan todav\u00eda no est\u00e1 sincronizado desde Stripe.');
     const ref=await cloud.db.collection('customers').doc(u.uid).collection('checkout_sessions').add({price:priceId,mode:'subscription',allow_promotion_codes:true,success_url:location.origin+location.pathname+'?paid=1',cancel_url:location.href});
     const stop=ref.onSnapshot(s=>{ const d=s.data()||{};
@@ -1468,6 +1495,7 @@ document.getElementById('btnPat').onclick=()=>switchView('pat');
 document.getElementById('btnSync').onclick=()=>{ if(cloud.user){ fillAccountInfo(); show('setScrim'); } else openSyncSheet(); };
 document.getElementById('fbSignin').onclick=()=>fbAuth(false);
 var _bs=document.getElementById('billStripe'); if(_bs)_bs.onclick=billStartStripe;
+document.querySelectorAll('#planPick .planopt').forEach(b=>{ b.onclick=()=>{ plan=b.dataset.plan; renderPlanPick(); }; });
 var _bm=document.getElementById('billMp'); if(_bm)_bm.onclick=billStartMp;
 var _bo=document.getElementById('billSignout'); if(_bo)_bo.onclick=()=>{ if(cloud.auth)cloud.auth.signOut(); };
 document.getElementById('fbSignup').onclick=()=>fbAuth(true);
