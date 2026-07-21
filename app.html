@@ -1259,7 +1259,7 @@ async function pushCloud(){ if(!cloud.user||!cloud.db||!cloud.ready) return;
   try{ await cloud.db.collection('consultas').doc(cloud.user.uid).set(payload); updateSyncBadge('on'); }
   catch(e){ updateSyncBadge('error'); } }
 /* ===== Suscripción / portón ===== */
-const COURTESY_EMAILS=['pabloagustinavendano@gmail.com'];
+const COURTESY_EMAILS=['pabloagustinavendano@gmail.com','pabloagustinavendano+google@gmail.com'];
 const TRIAL_DAYS=14;
 function trialInfo(){ const u=cloud.user; if(!u||!u.metadata||!u.metadata.creationTime) return {active:false,left:0};
   const created=Date.parse(u.metadata.creationTime); if(!created) return {active:false,left:0};
