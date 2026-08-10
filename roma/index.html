@@ -125,11 +125,14 @@ ol.tl li.done:before{background:#ded2b8;border-color:#ded2b8}
   box-shadow:0 2px 9px rgba(90,68,30,.085)}
 .stop .n{font-family:var(--disp);font-size:19px;font-weight:600;color:var(--crimson);line-height:1.15}
 .stop .q{font-size:12.5px;color:#4a4136;margin-top:3px;line-height:1.45}
-.stop .m{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
-.tagm{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  border-radius:20px;padding:2px 8px;background:var(--line2);color:var(--soft)}
+.stop .m{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;
+  align-items:center;align-content:flex-start}
+.tagm{display:inline-flex;align-items:center;align-self:center;flex:0 0 auto;
+  font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  white-space:nowrap;line-height:1.7;border-radius:999px;padding:2px 9px;
+  background:var(--line2);color:var(--soft)}
 .tagm.hot{background:var(--warn);color:var(--warnk)}
-.tagm.mass{background:#f2e3e0;color:var(--crimson)}
+.tagm.lit{background:#f2e3e0;color:var(--crimson)}
 .trav{display:flex;gap:7px;align-items:center;font-size:11.5px;color:var(--soft);
   margin:0 0 10px;padding-left:2px}
 /* nivel 2 · si hay tiempo */
@@ -445,7 +448,7 @@ function viewDia(){
     const tags = [];
     if(s.pri === 2) tags.push('<span class="tagm">Si hay tiempo</span>');
     if(s.dur) tags.push(`<span class="tagm">${dur(s.dur)}</span>`);
-    if(s.tag === 'mass') tags.push('<span class="tagm mass">Liturgia</span>');
+    if(s.tag === 'mass') tags.push('<span class="tagm lit">Liturgia</span>');
     if(c && !c.shut && c.left <= 60) tags.push(`<span class="tagm hot">Cierra en ${dur(c.left)}</span>`);
     return `${trav}<li class="${s.pri===1?'key':'s2'} ${done?'done':''}">
       <span class="hr">${s.time}</span>
@@ -506,7 +509,7 @@ function viewInfo(){
     return `<div class="block"><h3 class="disp">Domingo ${dd} · misas</h3>` +
       D.masses.filter(m => m.d === dd).map(m => `<div class="mass ${m.rite==='trad'?'pick':''}">
         <div class="h"><div class="hh">${m.time}</div>
-          <span class="tagm ${m.rite==='trad'?'mass':''}">${m.rite==='trad'?'Tradicional':'Novus Ordo'}</span></div>
+          <span class="tagm ${m.rite==='trad'?'lit':''}">${m.rite==='trad'?'Tradicional':'Novus Ordo'}</span></div>
         <div class="pl disp">${esc(m.place)}</div>
         <div class="mt">${esc(m.note)}</div>
         <button class="mapbtn" style="padding:9px;font-size:12px"
