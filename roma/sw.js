@@ -1,4 +1,4 @@
-const C = 'roma2026-v2';
+const C = 'roma2026-v3';
 self.addEventListener('install', e => { self.skipWaiting();
   e.waitUntil(caches.open(C).then(c => c.addAll(['./', './index.html']))); });
 self.addEventListener('activate', e => { e.waitUntil(
